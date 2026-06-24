@@ -1,0 +1,23 @@
+{
+    "name": "tvml2",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "php.validate.executablePath": "/usr/local/bin/php"
+            },
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "onecentlin.laravel-blade",
+                "shuhei-kagawa.laravel-jump"
+            ]
+        }
+    },
+    "remoteUser": "vscode",
+    "postCreateCommand": "composer install",
+    "containerEnv": {
+        "XDEBUG_MODE": "off"
+    }
+}
