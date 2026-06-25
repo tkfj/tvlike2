@@ -4,6 +4,7 @@ services:
     volumes:
       - ..:/workspace:cached
       - laravel-vendor:/workspace/vendor
+      - ../../tvdb:/workspace/db
     command: sleep infinity
     ports:
       - "8000:8000"
