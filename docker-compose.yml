@@ -9,7 +9,6 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_KEY=${APP_KEY}
   web:
     image: nginx:alpine
     restart: always

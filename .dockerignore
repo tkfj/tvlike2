@@ -1,0 +1,25 @@
+# Gitの管理ディレクトリ
+.git
+.github
+
+# 開発環境の設定やローカルの vendor
+.devcontainer
+vendor
+.phpunit.result.cache
+
+# データベース（手元のSQLiteファイルを本番に持ち込まない）
+database/*.sqlite
+database/*.sqlite-journal
+
+# 各種一時キャッシュ・ログ（中身は本番側で自動生成させる）
+bootstrap/cache/*.php
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/data/*
+storage/logs/*.log
+
+# ドキュメント
+README.md
+
+# 環境変数(envはボリュームマウントで注入するのでCOPY不要としたいが、composer install時に見てるっぽい(どの値かは不明)のでしょうがないので使わせる)
+#.env

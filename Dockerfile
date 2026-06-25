@@ -14,16 +14,13 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN rm -rf bootstrap/cache/*
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-RUN php artisan optimize
-
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database
+RUN touch /var/www/database/database.sqlite \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database \
+    && composer install --no-dev --optimize-autoloader --no-scripts \
+    && php artisan optimize \
+    && : > .env
 
 VOLUME /var/www/public
-
-## php-fpmのマスターはrootで動かすのでUSERは指定しない。(ワーカーはwww-dataで動く)
-# USER www-data
 
 EXPOSE 9000
 CMD ["php-fpm"]
