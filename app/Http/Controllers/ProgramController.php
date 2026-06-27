@@ -204,14 +204,48 @@ class ProgramController extends Controller
 
         $nextProgramUid = $pgm_uid;
         if ($randomwalk == 1) {
+            $rnd = rand(1,100);
+            if ($rnd <= 33) {
+                $randomwalk_pred = "n";
+            }
+            elseif ($rnd <= 50) {
+                $randomwalk_pred = "p";
+            }
+            else {
+                $randomwalk_pred = null;
+            }
+            $params_ = [];
+            if(is_null($randomwalk_pred)) {
+                $with_ = "tvml1 AS (
+                    SELECT * FROM tvml.tvml
+                    WHERE pgm_uid != :current_uid
+                    AND is_target = 1
+                    AND is_preinstalled = 0
+                    ORDER BY RANDOM() DESC
+                    LIMIT 1
+                )";
+                $params_['current_uid'] = $pgm_uid;
+            }
+            else {
+                $with_ = "tvml1 AS (
+                    SELECT * FROM tvml.tvml
+                    WHERE pgm_uid != :current_uid
+                    AND is_target = 1
+                    AND is_preinstalled = 0
+                    AND pred_label = :randomwalk_pred
+                    AND (interaction IS NULL OR interaction = '_')
+                    ORDER BY RANDOM() DESC
+                    LIMIT 1
+                )";
+                $params_['current_uid'] = $pgm_uid;
+                $params_['randomwalk_pred'] = $randomwalk_pred;
+            }
             $nextProgram = DB::selectOne("
-                SELECT pgm_uid FROM tvml.tvml
-                WHERE is_target = 1
-                AND (interaction IS NULL OR interaction = '' OR interaction = '_')
-                AND pgm_uid != :current_uid
-                ORDER BY random() DESC
-                LIMIT 1
-            ", ['current_uid' => $pgm_uid]);
+                WITH
+                {$with_}
+                SELECT pgm_uid
+                FROM tvml1
+            ", $params_);
             if ($nextProgram) {
                 $nextProgramUid = $nextProgram->pgm_uid;
             }
