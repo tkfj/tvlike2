@@ -15,17 +15,31 @@ class ProgramController extends Controller
         $pred_labels = $request->input('labels', ['p']);
         $keyword = $request->input('keyword');
         $sort = $request->input('sort', 'start_asc');
-        $limit = $request->input('limit', '100');
+        $limit = $request->input('limit', '500');
+        $future_only = $request->input('future_only', '1');
+        $pred_only = $request->input('pred_only', '1');
+        $tgtst_only = $request->input('tgtst_only', '1');
 
         // ベースとなる生クエリ（db1 や db2 のテーブルを指定）
         // ※テーブル名やカラム名は実際のファイルに合わせて書き換えてください
         $query = "
             SELECT * 
             FROM tvml.tvml 
-            WHERE is_target=1
-            AND pred_label IN ('p','n')
+            WHERE 1=1
         ";
         $params = [];
+        if($tgtst_only === '1') {
+            $query .= " AND is_target=1";
+        }
+        if($pred_only === '1') {
+            $query .= " AND pred_label IN ('p','n')";
+        }
+        if($future_only === '1') {
+            $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
+            $currentdates = $currenttime->format('Ymd');
+            $query .= " AND bsdate >= :bsdate";
+            $params['bsdate'] = $currentdates;
+        }
 
         if (!empty($pred_labels)) {
             $label_conditions = [];
@@ -60,11 +74,11 @@ class ProgramController extends Controller
                 $query .= " ORDER BY pred_proba ASC, pg_start ASC";
                 break;
             case 'start_desc':
-                $query .= " ORDER BY pg_start DESC, pg_end DESC";
+                $query .= " ORDER BY bsdate DESC, pg_start DESC, pg_end DESC";
                 break;
             case 'start_asc':
             default:
-                $query .= " ORDER BY pg_start ASC, pg_end ASC";
+                $query .= " ORDER BY bsdate ASC, pg_start ASC, pg_end ASC";
                 break;
         }
         $query .= " LIMIT :limit";
@@ -93,7 +107,17 @@ class ProgramController extends Controller
             'B'=> '福祉',
             'F'=> 'その他',
         ];
-        return view('programs.index', compact('programs', 'keyword', 'genre_map', 'sort', 'limit', 'pred_labels'));
+        return view('programs.index', compact(
+            'programs',
+            'keyword',
+            'genre_map',
+            'sort',
+            'limit',
+            'future_only',
+            'pred_only',
+            'tgtst_only',
+            'pred_labels'
+        ));
     }
 
     // 詳細画面
