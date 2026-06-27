@@ -23,10 +23,25 @@ class ProgramController extends Controller
         // ベースとなる生クエリ（db1 や db2 のテーブルを指定）
         // ※テーブル名やカラム名は実際のファイルに合わせて書き換えてください
         $query = "
+            WITH tvlike1 AS (
+            SELECT *,
+            ROW_NUMBER() OVER(PARTITION BY bsdate, tuner, station_id, pg_start, pg_end, pg_title ORDER BY asof DESC) AS interaction_rank
+            FROM tvlike.interactions
+            ),
+            tvlike0 AS (
+            SELECT *
+            FROM tvlike1
+            WHERE interaction_rank = 1
+            )
             SELECT m.*, i.interaction AS interaction_next 
             FROM tvml.tvml AS m
-            LEFT OUTER JOIN tvlike.interactions AS i
-            ON i.pgm_uid = m.pgm_uid
+            LEFT OUTER JOIN tvlike0 AS i
+            ON i.bsdate = m.bsdate
+            AND i.tuner = m.tuner
+            AND i.station_id = m.station_id
+            AND i.pg_start = m.pg_start
+            AND i.pg_end = m.pg_end
+            AND i.pg_title = m.pg_title
             WHERE 1=1
         ";
         $params = [];
@@ -126,10 +141,25 @@ class ProgramController extends Controller
     public function show($pgm_uid)
     {
         $query = "
+            WITH tvlike1 AS (
+            SELECT *,
+            ROW_NUMBER() OVER(PARTITION BY bsdate, tuner, station_id, pg_start, pg_end, pg_title ORDER BY asof DESC) AS interaction_rank
+            FROM tvlike.interactions
+            ),
+            tvlike0 AS (
+            SELECT *
+            FROM tvlike1
+            WHERE interaction_rank = 1
+            )
             SELECT m.*, i.interaction AS interaction_next 
             FROM tvml.tvml AS m
-            LEFT OUTER JOIN tvlike.interactions AS i
-            ON i.pgm_uid = m.pgm_uid
+            LEFT OUTER JOIN tvlike0 AS i
+            ON i.bsdate = m.bsdate
+            AND i.tuner = m.tuner
+            AND i.station_id = m.station_id
+            AND i.pg_start = m.pg_start
+            AND i.pg_end = m.pg_end
+            AND i.pg_title = m.pg_title
             WHERE m.pgm_uid = :pgm_uid
         ";
         $params['pgm_uid'] = $pgm_uid;
