@@ -5,6 +5,7 @@
 @section('content')
 <h1 class="text-2xl font-bold mb-6 border-b pb-2 text-gray-700">番組検索一覧</h1>
 <form action="{{ route('programs.index') }}" method="GET" class="mb-6 space-y-3 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+    @csrf
     <div class="flex gap-2">
         <input 
             type="text" 
