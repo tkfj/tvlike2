@@ -7,16 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProgramController extends Controller
 {
-    // ★ 共通のダミーデータ（プライベートメソッドで使い回す）
-    private function getDummyData()
-    {
-        return [
-            ['id' => 1, 'title' => '羽田スカイマーク 運用ログ', 'category' => 'インフラ', 'status' => '完了', 'updated_at' => '2026-06-25'],
-            ['id' => 2, 'title' => 'SQLite :memory: 同期検証', 'category' => 'データベース', 'status' => '進行中', 'updated_at' => '2026-06-24'],
-            ['id' => 3, 'title' => 'Caddy リバースプロキシ設定', 'category' => 'ネットワーク', 'status' => '未着手', 'updated_at' => '2026-06-23'],
-        ];
-    }
-
     // 一覧画面
     public function index(Request $request)
     {
@@ -107,7 +97,7 @@ class ProgramController extends Controller
     // 詳細画面
     public function show($pgm_uid)
     {
-         $query = "
+        $query = "
             SELECT * 
             FROM tvml.tvml 
             WHERE pgm_uid = :pgm_uid
@@ -129,6 +119,123 @@ class ProgramController extends Controller
             abort(404);
         }
 
-        return view('programs.show', compact('program'));
+        $randomwalk = request()->cookie('randomwalk', '0');
+        return view('programs.show', compact('program', 'randomwalk'));
+    }
+
+    /**
+     * ★ 詳細画面からの仕分け動作（POST）を処理
+     */
+    public function interact(Request $request, $pgm_uid)
+    {
+        // 1. 入力値のバリデーション
+        $request->validate([
+            'interaction' => 'required|in:p,n,_',
+            'randomwalk' => 'nullable|in:1',
+        ]);
+
+        $interaction = $request->input('interaction');
+        $randomwalk = $request->has('randomwalk') ? 1 : 0; // チェックボックスがONなら1、OFFなら0
+
+        // 2. データベースの更新
+        DB::statement("
+            INSERT INTO tvlike.interactions (
+                pgm_uid,
+                asof,
+                tuner,
+                bsdate,
+                station_id,
+                station_name,
+                pgm_station_name,
+                pid,
+                event_id,
+                pg_start,
+                pg_end,
+                pg_title,
+                pg_detail,
+                genre,
+                link,
+                interaction
+            )
+            SELECT
+                pgm_uid,
+                asof,
+                tuner,
+                bsdate,
+                station_id,
+                station_name,
+                pgm_station_name,
+                pid,
+                event_id,
+                pg_start,
+                pg_end,
+                pg_title,
+                pg_detail,
+                genre,
+                link,
+                :interaction
+            FROM tvguide.programs
+            WHERE
+            pgm_uid = :pgm_uid
+            LIMIT 1
+            ON CONFLICT(pgm_uid)
+            DO UPDATE SET
+                asof = EXCLUDED.asof,
+                tuner = EXCLUDED.tuner,
+                bsdate = EXCLUDED.bsdate,
+                station_id = EXCLUDED.station_id,
+                station_name = EXCLUDED.station_name,
+                pgm_station_name = EXCLUDED.pgm_station_name,
+                pid = EXCLUDED.pid,
+                event_id = EXCLUDED.event_id,
+                pg_start = EXCLUDED.pg_start,
+                pg_end = EXCLUDED.pg_end,
+                pg_title = EXCLUDED.pg_title,
+                pg_detail = EXCLUDED.pg_detail,
+                genre = EXCLUDED.genre,
+                link = EXCLUDED.link,
+                interaction = EXCLUDED.interaction,
+                updated_at = DATETIME('now','localtime')
+            ;
+        ", [
+            'pgm_uid' => $pgm_uid,
+            'interaction' => $interaction
+        ]);
+
+        $nextProgramUid = $pgm_uid;
+        if ($randomwalk == 1) {
+            $nextProgram = DB::selectOne("
+                SELECT pgm_uid FROM tvml.tvml
+                WHERE is_target = 1
+                AND (interaction IS NULL OR interaction = '' OR interaction = '_')
+                AND pgm_uid != :current_uid
+                ORDER BY random() DESC
+                LIMIT 1
+            ", ['current_uid' => $pgm_uid]);
+            if ($nextProgram) {
+                $nextProgramUid = $nextProgram->pgm_uid;
+            }
+            else {
+                $nextProgramUid = null;
+            }
+        }
+
+        // ステータスに応じた日本語メッセージをトースト用に作成
+        $interactionLabels = ['p' => '「Positive」に仕分けました', 'n' => '「Negative」に仕分けました', '_' => '「保留」にしました'];
+        $msg = $interactionLabels[$interaction] ?? '保存しました';
+
+        // 4. リダイレクト先の判定
+        if ($nextProgramUid) {
+            // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
+            $redirect = redirect()
+                ->route('programs.show', ['pgm_uid' => $nextProgramUid])
+                ->with(['message' => $msg, 'pgm_uid' => $pgm_uid]);
+        } else {
+            // 全て処理し終えたら一覧画面へ戻る
+            $redirect = redirect()
+                ->route('programs.index')
+                ->with('message', $msg . '（すべての未処理番組の仕分けが完了しました！）');
+        }
+        return $redirect->withCookie(cookie('randomwalk', $randomwalk, 43200));
     }
 }

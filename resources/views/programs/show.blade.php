@@ -55,23 +55,8 @@
 
             <form id="sortForm" action="?" method="POST" class="space-y-4">
                 @csrf
-                <input type="hidden" name="pgm_uid" value="{{ $program['pgm_uid'] }}">
-                <input type="hidden" name="status" id="statusInput" value="">
-
-                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200/60 flex items-center">
-                    <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-medium text-gray-700 select-none w-full">
-                        <input 
-                            type="checkbox" 
-                            name="option_1" 
-                            value="1" 
-                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                        >
-                        <div>
-                            <span class="block font-bold text-gray-800">オプション1</span>
-                            <span class="block text-[11px] text-gray-400 font-normal">（後ほど実装する機能のチェックボックス）</span>
-                        </div>
-                    </label>
-                </div>
+                <input type="hidden" name="pgm_uid" value="{{ $program['pgm_uid'] }}"> <!-- これ要らないよね -->
+                <input type="hidden" name="interaction" id="interactionInput" value="">
 
                 <div class="grid grid-cols-3 gap-3 pt-2">
                     <button 
@@ -98,6 +83,21 @@
                         保留 <span class="block text-[11px] font-normal opacity-80 mt-0.5">キー [3]</span>
                     </button>
                 </div>
+
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200/60 flex items-center">
+                    <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-medium text-gray-700 select-none w-full">
+                        <input 
+                            type="checkbox" 
+                            name="randomwalk" 
+                            value="1" 
+                            {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
+                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                        >
+                        <div>
+                            <span class="block font-bold text-gray-800">Random Walk</span>
+                        </div>
+                    </label>
+                </div>
             </form>
         </div>
     </div>
@@ -111,14 +111,14 @@
 </div>
 
 <script>
-    function submitForm(status) {
-        document.getElementById('statusInput').value = status;
+    function submitForm(interaction) {
+        document.getElementById('interactionInput').value = interaction;
         document.getElementById('sortForm').submit();
     }
 
     // キーボードショートカットの完全移植
     window.addEventListener('keydown', (e) => {
-        // 入力フォーム等にフォーカスが当たっている場合は発火させない（バグ回避お作法）
+        // 入力フォーム等にフォーカスが当たっている場合は発火させない
         if (e.target.tagName === 'INPUT' && e.target.type === 'text') return;
         
         if (e.key === '1') submitForm('p');

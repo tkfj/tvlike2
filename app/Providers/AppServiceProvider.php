@@ -15,12 +15,26 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $db = DB::connection('sqlite');
-        $dbpath=base_path(env('DB_TVML'));
-        if($dbpath){
-            $db->statement("ATTACH DATABASE '" . $dbpath . "' AS tvml");
+        $tvmlpath=base_path(env('DB_TVML'));
+        if($tvmlpath){
+            $db->statement("ATTACH DATABASE '" . $tvmlpath . "' AS tvml");
         }
         else {
-            Log::warning($dbpath);
+            Log::warning($tvmlpath);
+        }
+        $tvlikepath=base_path(env('DB_TVLIKE'));
+        if($tvlikepath){
+            $db->statement("ATTACH DATABASE '" . $tvlikepath . "' AS tvlike");
+        }
+        else {
+            Log::warning($tvlikepath);
+        }
+        $tvguidepath=base_path(env('DB_TVGUIDE'));
+        if($tvguidepath){
+            $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS tvguide");
+        }
+        else {
+            Log::warning($tvguidepath);
         }
     }
 }

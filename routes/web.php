@@ -8,3 +8,4 @@ Route::get('/programs', [ProgramController::class, 'index'])->name('programs.ind
 
 // 詳細画面
 Route::get('/programs/{pgm_uid}', [ProgramController::class, 'show'])->name('programs.show');
+Route::post('/programs/{pgm_uid}', [ProgramController::class, 'interact'])->name('programs.interact');
