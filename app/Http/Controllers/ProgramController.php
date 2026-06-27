@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -202,6 +204,9 @@ class ProgramController extends Controller
             'interaction' => $interaction
         ]);
 
+        $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
+        $pasttime = $currenttime->modify('-7 days');
+        $pastdates = $pasttime->format('Ymd');
         $nextProgramUid = $pgm_uid;
         if ($randomwalk == 1) {
             $rnd = rand(1,100);
@@ -221,10 +226,12 @@ class ProgramController extends Controller
                     WHERE pgm_uid != :current_uid
                     AND is_target = 1
                     AND is_preinstalled = 0
+                    AND bsdate >= :pastdates
                     ORDER BY RANDOM() DESC
                     LIMIT 1
                 )";
                 $params_['current_uid'] = $pgm_uid;
+                $params_['pastdates'] = $pastdates;
             }
             else {
                 $with_ = "tvml1 AS (
@@ -232,12 +239,14 @@ class ProgramController extends Controller
                     WHERE pgm_uid != :current_uid
                     AND is_target = 1
                     AND is_preinstalled = 0
+                    AND bsdate >= :pastdates
                     AND pred_label = :randomwalk_pred
                     AND (interaction IS NULL OR interaction = '_')
                     ORDER BY RANDOM() DESC
                     LIMIT 1
                 )";
                 $params_['current_uid'] = $pgm_uid;
+                $params_['pastdates'] = $pastdates;
                 $params_['randomwalk_pred'] = $randomwalk_pred;
             }
             $nextProgram = DB::selectOne("
