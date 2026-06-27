@@ -36,6 +36,11 @@ return [
             'database' => ':memory:',
             'prefix' => '',
             'foreign_key_constraints' => true,
+            'db_path' => [
+                'tvguide' => env('DB_TVGUIDE'),
+                'tvlike' => env('DB_TVLIKE'),
+                'tvml' => env('DB_TVML')
+            ]
         ],
         'mysql' => [
             'driver' => 'mysql',

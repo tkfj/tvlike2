@@ -15,29 +15,32 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $db = DB::connection('sqlite');
-        $tvmlpath=base_path(env('DB_TVML'));
-	if($tvmlpath){
-	    if(file_exists($tvmlpath)){
-		    $db->statement("ATTACH DATABASE '" . $tvmlpath . "' AS tvml");
-		}
+    	if(config('database.connections.sqlite.db_path.tvml')){
+            $tvmlpath=base_path(config('database.connections.sqlite.db_path.tvml'));
+	        if(is_file($tvmlpath)){
+		        $db->statement("ATTACH DATABASE '" . $tvmlpath . "' AS tvml");
+    		}
+            else {
+                Log::warning($tvmlpath);
+            }
         }
-        else {
-            Log::warning($tvmlpath);
+    	if(config('database.connections.sqlite.db_path.tvlike')){
+            $tvlikepath=base_path(config('database.connections.sqlite.db_path.tvlike'));
+            if(is_file($tvlikepath)){
+                $db->statement("ATTACH DATABASE '" . $tvlikepath . "' AS tvlike");
+            }
+            else {
+                Log::warning($tvlikepath);
+            }
         }
-        $tvlikepath=base_path(env('DB_TVLIKE'));
-	if($tvlikepath){
-		if(file_exists($tvlikepath)){
-            $db->statement("ATTACH DATABASE '" . $tvlikepath . "' AS tvlike");
-        }}
-        else {
-            Log::warning($tvlikepath);
-        }
-        $tvguidepath=base_path(env('DB_TVGUIDE'));
-        if($tvguidepath){if(file_exists($tvguidepath)){
-            $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS tvguide");
-        }}
-        else {
-            Log::warning($tvguidepath);
+    	if(config('database.connections.sqlite.db_path.tvguide')){
+            $tvguidepath=base_path(config('database.connections.sqlite.db_path.tvguide'));
+            if(is_file($tvguidepath)){
+                $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS tvguide");
+            }
+            else {
+                Log::warning($tvguidepath);
+            }
         }
     }
 }
