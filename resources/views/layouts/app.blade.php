@@ -2,10 +2,11 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', '番組管理システム')</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss-browser/4.3.1/index.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased">
 
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
@@ -22,7 +23,7 @@
             <button 
                 type="button" 
                 onclick="toggleMenu()" 
-                class="md:hidden p-2 rounded-md hover:bg-indigo-700 focus:outline-none transition"
+                class="block md:hidden p-2 rounded-md hover:bg-indigo-700 focus:outline-none transition"
                 aria-label="メニューを開く"
             >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,7 +34,7 @@
     </header>
 
     <div id="mobile-menu" class="hidden fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-600/70" onclick="toggleMenu()"></div>
+        <div class="fixed inset-0 bg-black/50" onclick="toggleMenu()"></div>
         
         <nav class="fixed top-0 right-0 bottom-0 w-64 bg-white p-6 shadow-xl flex flex-col space-y-4">
             <div class="flex items-center justify-between border-b pb-2 mb-2">
@@ -50,11 +51,12 @@
         </nav>
     </div>
 
-    <main class="max-w-4xl mx-auto px-4 py-8">
+    <main class="max-w-4xl mx-auto px-4 py-6">
         @yield('content')
     </main>
 
     <script>
+        // フルバージョン標準の classList 操作に戻す
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');

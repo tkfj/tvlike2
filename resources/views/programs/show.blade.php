@@ -26,8 +26,10 @@
 @section('title', ($program['pg_title'] ?? '番組詳細') . ' - 仕分け')
 
 @section('content')
-<div class="max-w-md mx-auto px-4 pt-4 pb-32">
-    
+<!-- <div class="max-w-md mx-auto px-4 pt-4 pb-32"> -->
+
+<div class="w-full md:max-w-md mx-auto px-4 pt-2 pb-32">
+
     <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
         <div class="flex items-center justify-between">
             <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
@@ -86,22 +88,22 @@
 
             <div class="grid grid-cols-3 gap-3">
 
-                <button type="button" onclick="submitForm('Positive')" 
+                <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
                     <span class="text-lg font-bold">1</span>
                     <span class="text-xs font-medium mt-0.5">興味あり</span>
                 </button>
 
-                <button type="button" onclick="submitForm('unclassified')" 
+                <button type="button" onclick="submitForm('_')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
                     <span class="text-lg font-bold">2</span>
                     <span class="text-xs font-medium mt-0.5">保留</span>
                 </button>
 
-                <button type="button" onclick="submitForm('Negative')" 
+                <button type="button" onclick="submitForm('n')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
                     <span class="text-lg font-bold">3</span>
-                    <span class="text-xs font-medium mt-0.5">対象外</span>
+                    <span class="text-xs font-medium mt-0.5">興味なし</span>
                 </button>
             </div>
         </form>
