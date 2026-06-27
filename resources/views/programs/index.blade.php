@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                             
                             <span class="font-mono text-gray-500 text-[11px]">
-                                Proba: {{ number_format((float)($prog['pred_proba'] ?? 0), 3) }}
+                                Proba: {{ number_format((float)($prog['pred_proba'] ?? 0), 4) }}
                             </span>
                             
                             <a href="{{ route('programs.show', $prog['pgm_uid'] ?? '0') }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-[11px] hover:underline">
