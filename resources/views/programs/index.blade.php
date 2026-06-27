@@ -200,12 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-2 text-xs">
-                            <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['interaction'] ?? '') }}">
-                                Interaction: {{ $prog['interaction'] ?? '-' }}
+                            <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
+                                Interaction: {{ $prog['interaction_next'] ?? $prog['interaction'] }}{{ ($prog['interaction_next'] ?? '') == $prog['interaction'] ? '' : '*'}}
                             </span>
                             
                             <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                Prediction: {{ $prog['pred_label'] ?? '-' }}
+                                Prediction: {{ $prog['pred_label'] ?? '_' }}
                             </span>
                             
                             <span class="font-mono text-gray-500 text-[11px]">

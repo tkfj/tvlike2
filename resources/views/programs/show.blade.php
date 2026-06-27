@@ -1,13 +1,15 @@
 @php
     $interaction = $program['interaction'] ?? '_';
+    $interactionNext = $program['interaction_next'] ?? null;
     $pred_label = $program['pred_label'] ?? '_';
     $labelColors = [
         'p' => ['bg' => 'bg-green-100 text-green-800'],
         'n' => ['bg' => 'bg-red-100 text-red-800'],
         '_' => ['bg' => 'bg-gray-100 text-gray-800'],
     ];
-    $interactionColors = $labelColors[$interaction] ?? $labelColors['_'];
+    $interactionColors = $labelColors[$interactionNext ?? $interaction] ?? $labelColors['_'];
     $predLabelColors = $labelColors[$pred_label] ?? $labelColors['_'];
+    $interactionStar = (is_null($interactionNext) or $interaction==$interactionNext) ? '' : '*';
 
     $dts = DateTime::createFromFormat('YmdHi', $program['pg_start']);
     $dts_s = $dts->format('Y-m-d H:i');
@@ -39,7 +41,7 @@
         </div>
         <div class="flex items-center justify-between">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $interactionColors['bg'] }}">
-                Interaction: {{ $interaction }}
+                Interaction: {{ $interactionNext ?? $interaction }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $predLabelColors['bg'] }}">
                 Prediction: {{ $pred_label }}

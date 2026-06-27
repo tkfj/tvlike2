@@ -23,21 +23,23 @@ class ProgramController extends Controller
         // ベースとなる生クエリ（db1 や db2 のテーブルを指定）
         // ※テーブル名やカラム名は実際のファイルに合わせて書き換えてください
         $query = "
-            SELECT * 
-            FROM tvml.tvml 
+            SELECT m.*, i.interaction AS interaction_next 
+            FROM tvml.tvml AS m
+            LEFT OUTER JOIN tvlike.interactions AS i
+            ON i.pgm_uid = m.pgm_uid
             WHERE 1=1
         ";
         $params = [];
         if($tgtst_only === '1') {
-            $query .= " AND is_target=1";
+            $query .= " AND m.is_target=1";
         }
         if($pred_only === '1') {
-            $query .= " AND pred_label IN ('p','n')";
+            $query .= " AND m.pred_label IN ('p','n')";
         }
         if($future_only === '1') {
             $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
             $currentdates = $currenttime->format('Ymd');
-            $query .= " AND bsdate >= :bsdate";
+            $query .= " AND m.bsdate >= :bsdate";
             $params['bsdate'] = $currentdates;
         }
 
@@ -47,9 +49,9 @@ class ProgramController extends Controller
             foreach ($pred_labels as $index => $label) {
                 $param_name = "label_" . $index;
                 if ($label === '_') {
-                    $label_conditions[] = "(pred_label IS NULL OR pred_label = '' OR pred_label = '_')";
+                    $label_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
                 } else {
-                    $label_conditions[] = "pred_label = :{$param_name}";
+                    $label_conditions[] = "m.pred_label = :{$param_name}";
                     $params[$param_name] = $label;
                 }
             }
@@ -61,24 +63,24 @@ class ProgramController extends Controller
         
         // 検索キーワード
         if (!empty($keyword)) {
-            $query .= " AND (pg_title LIKE :keyword_title OR pg_detail LIKE :keyword_detail)";
+            $query .= " AND (m.pg_title LIKE :keyword_title OR m.pg_detail LIKE :keyword_detail)";
             $params['keyword_title'] = '%' . $keyword . '%';
             $params['keyword_detail'] = '%' . $keyword . '%';
         }
 
         switch ($sort) {
             case 'prob_desc':
-                $query .= " ORDER BY pred_proba DESC, pg_start ASC";
+                $query .= " ORDER BY m.pred_proba DESC, m.pg_start ASC";
                 break;
             case 'prob_asc':
-                $query .= " ORDER BY pred_proba ASC, pg_start ASC";
+                $query .= " ORDER BY m.pred_proba ASC, m.pg_start ASC";
                 break;
             case 'start_desc':
-                $query .= " ORDER BY bsdate DESC, pg_start DESC, pg_end DESC";
+                $query .= " ORDER BY m.bsdate DESC, m.pg_start DESC, m.pg_end DESC";
                 break;
             case 'start_asc':
             default:
-                $query .= " ORDER BY bsdate ASC, pg_start ASC, pg_end ASC";
+                $query .= " ORDER BY m.bsdate ASC, m.pg_start ASC, m.pg_end ASC";
                 break;
         }
         $query .= " LIMIT :limit";
@@ -124,9 +126,11 @@ class ProgramController extends Controller
     public function show($pgm_uid)
     {
         $query = "
-            SELECT * 
-            FROM tvml.tvml 
-            WHERE pgm_uid = :pgm_uid
+            SELECT m.*, i.interaction AS interaction_next 
+            FROM tvml.tvml AS m
+            LEFT OUTER JOIN tvlike.interactions AS i
+            ON i.pgm_uid = m.pgm_uid
+            WHERE m.pgm_uid = :pgm_uid
         ";
         $params['pgm_uid'] = $pgm_uid;
         // クエリ実行
