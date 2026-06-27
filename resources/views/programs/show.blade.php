@@ -1,115 +1,112 @@
+@php
+    $interaction = $program['interaction'] ?? '_';
+    $pred_label = $program['pred_label'] ?? '_';
+    $labelColors = [
+        'p' => ['bg' => 'bg-green-100 text-green-800'],
+        'n' => ['bg' => 'bg-red-100 text-red-800'],
+        '_' => ['bg' => 'bg-gray-100 text-gray-800'],
+    ];
+    $interactionColors = $labelColors[$interaction] ?? $labelColors['_'];
+    $predLabelColors = $labelColors[$pred_label] ?? $labelColors['_'];
+
+    $dts = DateTime::createFromFormat('YmdHi', $program['pg_start']);
+    $dts_s = $dts->format('Y-m-d H:i');
+    $dte = DateTime::createFromFormat('YmdHi', $program['pg_end']);
+    $dti = $dte->diff($dts);
+    $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
+    $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : str_replace("_", " ", $program['pgm_station_name']);
+
+    $genre_cd = $program['genre'] ?? '_';
+//    $genre_lbl = $genre_map[$genre_cd] ?? NULL;
+
+@endphp
+
 @extends('layouts.app')
 
 @section('title', ($program['pg_title'] ?? '番組詳細') . ' - 仕分け')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div class="max-w-md mx-auto px-4 pt-4 pb-32">
     
-    <div class="mb-4 flex items-center justify-between">
-        <a href="{{ route('programs.index') }}" class="text-sm text-indigo-600 hover:underline flex items-center gap-1">
-            &larr; 一覧に戻る
-        </a>
+    <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
+        <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
+            <a href="{{ route('programs.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                ← 一覧に戻る
+            </a>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $interactionColors['bg'] }}">
+                Interaction: {{ $interaction }}
+            </span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $predLabelColors['bg'] }}">
+                Prediction: {{ $pred_label }}
+            </span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
+                Proba: {{ number_format((float)($program['pred_proba'] ?? 0), 4) }}
+            </span>
+        </div>
+        <h1 class="text-xl font-bold text-gray-900 leading-tight">
+            {{ $program['pg_title'] }}
+        </h1>
+    </div>
 
-        @if(session('message') || isset($message))
-            <div id="toast" class="bg-gray-900 text-white text-xs px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-bounce">
-                <span>{{ session('message') ?? $message }}</span>
-                <a href="?pgm_uid={{ $program['pgm_uid'] }}" class="text-sky-400 border border-sky-400 rounded-full px-2 py-0.5 hover:bg-sky-400 hover:text-gray-900 transition">
-                    やりなおす
-                </a>
+    <div class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">
+        @if(!empty($program['pg_detail']))
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <p class="whitespace-pre-wrap">{{ $program['pg_detail'] }}</p>
             </div>
         @endif
-    </div>
-
-    <div class="bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden transition-transform duration-150 active:scale-[0.99]">
-        
-        <div class="bg-gray-50 px-6 py-3 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-            <div class="text-gray-400">UID: #{{ $program['pgm_uid'] }}</div>
-            <div class="flex gap-3 text-gray-600">
-                <span>Interaction: <strong class="text-gray-900">{{ $program['interaction'] ?? '_' }}</strong></span>
-                <span>Prediction: <strong class="text-gray-900">{{ $program['pred_label'] ?? '_' }}</strong></span>
-                <span>Proba: <strong class="text-gray-900">{{ number_format((float)($program['pred_proba'] ?? 0), 4) }}</strong></span>
-            </div>
+        <div class="text-center text-xs text-gray-500 bg-white p-3 rounded-lg border border-gray-200">
+            <div>{{ $station ?? '???' }} | {{ $dts_s }} | {{ $dti_m }} min.</div>
         </div>
-
-        <div class="p-6">
-            <div class="text-xs text-gray-400 mb-2 flex flex-wrap items-center gap-1.5 font-medium">
-                <span>{{ $program['pgm_station_name'] ?? $station ?? '' }}</span>
-                <span>|</span>
-                <span>{{ $dts_s ?? '' }}</span>
-                <span>|</span>
-                <span>{{ $dti_m ?? 0 }}分</span>
-                @if(!empty($genre_lbl))
-                    <span>|</span>
-                    <span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px]">{{ $genre_lbl }}</span>
-                @endif
-            </div>
-
-            <h1 class="text-xl font-bold text-gray-900 mb-4 leading-snug">
-                {{ $program['pg_title'] }}
-            </h1>
-
-            <div class="border-l-4 border-indigo-500 pl-4 py-1 text-sm text-gray-600 leading-relaxed mb-6 bg-indigo-50/30 rounded-r-lg p-3">
-                <span class="block text-[10px] text-indigo-400 font-bold uppercase tracking-wider mb-1">Detail</span>
-                {!! nl2br(htmlspecialchars($program['pg_detail'] ?? '詳細説明はありません。')) !!}
-            </div>
-
-            <form id="sortForm" action="?" method="POST" class="space-y-4">
-                @csrf
-                <input type="hidden" name="pgm_uid" value="{{ $program['pgm_uid'] }}"> <!-- これ要らないよね -->
-                <input type="hidden" name="interaction" id="interactionInput" value="">
-
-                <div class="grid grid-cols-3 gap-3 pt-2">
-                    <button 
-                        type="button" 
-                        onclick="submitForm('p')" 
-                        class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl shadow-md text-sm transition-all text-center cursor-pointer"
-                    >
-                        興味あり <span class="block text-[11px] font-normal opacity-80 mt-0.5">キー [1]</span>
-                    </button>
-                    
-                    <button 
-                        type="button" 
-                        onclick="submitForm('n')" 
-                        class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold py-3 px-4 rounded-xl shadow-md text-sm transition-all text-center cursor-pointer"
-                    >
-                        興味なし <span class="block text-[11px] font-normal opacity-80 mt-0.5">キー [2]</span>
-                    </button>
-                    
-                    <button 
-                        type="button" 
-                        onclick="submitForm('_')" 
-                        class="bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl shadow-md text-sm transition-all text-center cursor-pointer"
-                    >
-                        保留 <span class="block text-[11px] font-normal opacity-80 mt-0.5">キー [3]</span>
-                    </button>
-                </div>
-
-                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200/60 flex items-center">
-                    <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-medium text-gray-700 select-none w-full">
-                        <input 
-                            type="checkbox" 
-                            name="randomwalk" 
-                            value="1" 
-                            {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
-                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                        >
-                        <div>
-                            <span class="block font-bold text-gray-800">Random Walk</span>
-                        </div>
-                    </label>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="mt-6 text-center text-xs text-gray-400 flex items-center justify-center gap-4 bg-white/60 py-2 rounded-lg border border-dashed border-gray-200">
-        <span>⌨️ テンキー片手に高速仕分け可能:</span>
-        <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded font-mono text-gray-600 shadow-sm text-[11px]">1</kbd> 興味あり</span>
-        <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded font-mono text-gray-600 shadow-sm text-[11px]">2</kbd> 興味なし</span>
-        <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded font-mono text-gray-600 shadow-sm text-[11px]">3</kbd> 保留</span>
     </div>
 </div>
 
+<div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
+    <div class="max-w-md mx-auto">
+        <form id="sortForm" action="?" method="POST" class="space-y-4">
+            @csrf
+            <input type="hidden" name="pgm_uid" value="{{ $program['pgm_uid'] }}"> <!-- これ要らないよね -->
+            <input type="hidden" name="interaction" id="interactionInput" value="">
+            <div class="flex items-center justify-center mb-3">
+                <label class="inline-flex items-center cursor-pointer bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm active:bg-gray-100">
+                    <input type="checkbox" 
+                        id="randomWalk" 
+                        name="randomwalk" 
+                        value="1" 
+                        form="sortForm"
+                            {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
+                        class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
+                    <span class="ml-2.5 text-xs font-semibold text-purple-700 tracking-wider flex items-center gap-1">
+                        🎲 Random Walk
+                    </span>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+
+                <button type="button" onclick="submitForm('Positive')" 
+                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
+                    <span class="text-lg font-bold">1</span>
+                    <span class="text-xs font-medium mt-0.5">興味あり</span>
+                </button>
+
+                <button type="button" onclick="submitForm('unclassified')" 
+                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                    <span class="text-lg font-bold">2</span>
+                    <span class="text-xs font-medium mt-0.5">保留</span>
+                </button>
+
+                <button type="button" onclick="submitForm('Negative')" 
+                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
+                    <span class="text-lg font-bold">3</span>
+                    <span class="text-xs font-medium mt-0.5">対象外</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
     function submitForm(interaction) {
         document.getElementById('interactionInput').value = interaction;
