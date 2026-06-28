@@ -68,7 +68,7 @@
 </div>
 
 @if (session()->has('message') and session('message'))
-    <div id="toast" class="fixed bottom-40 inset-x-4 max-w-sm mx-auto bg-gray-900/95 text-white text-sm px-4 py-3 rounded-xl shadow-2xl z-50 text-center font-medium backdrop-blur-sm transition-opacity duration-1000">
+    <div id="toast" class="fixed bottom-40 inset-x-4 max-w-sm mx-auto bg-gray-900/95 text-white text-sm px-4 py-3 rounded-xl shadow-2xl z-50 text-center font-medium backdrop-blur-sm transition-opacity duration-150 ease-out">
         {{ session('message') }}
     </div>
 @endif
@@ -96,26 +96,34 @@
                 
                 <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">1</span>
-                    <span class="text-xs font-medium mt-0.5">興味あり</span>
+                    <span class="text-base font-bold">興味あり</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">1</kbd>
+                    </span>
                 </button>
 
                 <button type="button" onclick="submitForm('n')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">2</span>
-                    <span class="text-xs font-medium mt-0.5">興味なし</span>
+                    <span class="text-base font-bold">興味なし</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">2</kbd>
+                    </span>
                 </button>
 
                 <button type="button" onclick="submitForm('_')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">3</span>
-                    <span class="text-xs font-medium mt-0.5">中立</span>
+                    <span class="text-base font-bold">中立</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">3</kbd>
+                    </span>
                 </button>
 
                 <button id="skipButton" type="button" onclick="submitForm('')" 
                         class="{{ ($randomwalk ?? '0') === '1' ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">4</span>
-                    <span class="text-xs font-medium mt-0.5">スキップ</span>
+                    <span class="text-base font-bold">スキップ</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">4</kbd>
+                    </span>
                 </button>
 
             </div>
@@ -145,6 +153,10 @@
         }
     });
     function submitForm(interaction) {
+        const existingToast = document.getElementById('toast');
+        if (existingToast) {
+            existingToast.classList.add('opacity-0');
+        }
         document.getElementById('interactionInput').value = interaction;
         document.getElementById('sortForm').submit();
     }
