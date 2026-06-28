@@ -18,16 +18,12 @@
                 <a href="{{ route('programs.index') }}" class="hover:text-indigo-200 transition">番組一覧</a>
                 <a href="#" class="hover:text-indigo-200 transition">ダミーメニュー1</a>
                 <a href="#" class="hover:text-indigo-200 transition">設定</a>
-                <form>
+                <form method="POST" action="{{ route('programs.interact', 'randomwalk') }}">
                     @csrf
                     <button 
                         type="submit" 
-                        formaction="{{ route('programs.interact', 'randomwalk') }}" 
-                        formmethod="POST"
                         class="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 font-semibold text-sm transition shrink-0 flex items-center gap-1 active:bg-purple-800"
-                    >
-                        🎲 Random Walk
-                    </button>
+                    >🎲 Random Walk</button>
                 </form>
             </nav>
 
