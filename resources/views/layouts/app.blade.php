@@ -7,7 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
-
+    <form id="nav-randomwalk-form" action="{{ route('programs.interact', 'randomwalk') }}" method="POST" class="hidden">
+        @csrf
+    </form>
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition">
@@ -16,15 +18,11 @@
 
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <a href="{{ route('programs.index') }}" class="hover:text-indigo-200 transition">番組一覧</a>
-                <a href="#" class="hover:text-indigo-200 transition">ダミーメニュー1</a>
-                <a href="#" class="hover:text-indigo-200 transition">設定</a>
-                <form method="POST" action="{{ route('programs.interact', 'randomwalk') }}">
-                    @csrf
-                    <button 
-                        type="submit" 
-                        class="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 font-semibold text-sm transition shrink-0 flex items-center gap-1 active:bg-purple-800"
-                    >🎲 Random Walk</button>
-                </form>
+                <a href="#" 
+                    onclick="event.preventDefault(); document.getElementById('nav-randomwalk-form').submit();" 
+                    class="hover:text-indigo-200 transition">
+                    🎲 Random Walk
+                </a>
             </nav>
 
             <button 
@@ -53,8 +51,11 @@
                 </button>
             </div>
             <a href="{{ route('programs.index') }}" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">番組一覧</a>
-            <a href="#" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">ダミーメニュー1</a>
-            <a href="#" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">設定</a>
+            <a href="#" 
+                onclick="event.preventDefault(); toggleMenu(); document.getElementById('nav-randomwalk-form').submit();" 
+                class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">
+                🎲 Random Walk
+            </a>
         </nav>
     </div>
 
