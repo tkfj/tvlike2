@@ -35,9 +35,11 @@
     <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
         <div class="flex items-center justify-between">
             <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
-            <a href="{{ route('programs.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
-                ← 一覧に戻る
-            </a>
+            @if((int)$randomwalk === 0)
+                <a href="{{ route('programs.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                    ← 一覧に戻る
+                </a>
+            @endif
         </div>
         <div class="flex items-center justify-between">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $interactionColors['bg'] }}">
@@ -74,28 +76,14 @@
 @endif
 <div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
     <div class="max-w-md mx-auto">
-        <form id="sortForm" action="{{ route('programs.interact', ['pgm_uid' => $program['pgm_uid']]) }}" method="POST" class="space-y-4">
+        <form id="sortForm" action="{{ route('programs.interact', ['pgm_uid' => $program['pgm_uid'], 'randomwalk' => $randomwalk]) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="interaction" id="interactionInput" value="">
-            <div class="flex items-center justify-center mb-3">
-                <label class="inline-flex items-center cursor-pointer bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm active:bg-gray-100">
-                    <input type="checkbox" 
-                        id="randomWalk" 
-                        name="randomwalk" 
-                        value="1" 
-                        form="sortForm"
-                        {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
-                        class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
-                    <span class="ml-2.5 text-xs font-semibold text-purple-700 tracking-wider flex items-center gap-1">
-                        🎲 Random Walk
-                    </span>
-                </label>
-            </div>
 
-            <div id="buttonGrid" class="grid {{ ($randomwalk ?? '0') === '1' ? 'grid-cols-4' : 'grid-cols-3' }} gap-3">
+            <div id="buttonGrid" class="grid {{ (int)$randomwalk === 1 ? 'grid-cols-4' : 'grid-cols-3' }} gap-3">
                 
                 <button id="skipButton" type="button" onclick="submitForm('')" 
-                        class="{{ ($randomwalk ?? '0') === '1' ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                        class="{{ (int)$randomwalk === 1 ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">スキップ</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">Esc</kbd>
@@ -131,60 +119,37 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const randomWalkCheck = document.getElementById('randomWalk');
-        const buttonGrid = document.getElementById('buttonGrid');
-        const skipButton = document.getElementById('skipButton');
-
-        if (randomWalkCheck && buttonGrid && skipButton) {
-            randomWalkCheck.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    // Random Walk ON: スキップボタンを表示し、4列に変更
-                    skipButton.classList.remove('hidden');
-                    buttonGrid.classList.remove('grid-cols-3');
-                    buttonGrid.classList.add('grid-cols-4');
-                } else {
-                    // Random Walk OFF: スキップボタンを非表示にし、3列に変更
-                    skipButton.classList.add('hidden');
-                    buttonGrid.classList.remove('grid-cols-4');
-                    buttonGrid.classList.add('grid-cols-3');
-                }
-            });
-        }
-    });
-    function submitForm(interaction) {
-        const existingToast = document.getElementById('toast');
-        if (existingToast) {
-            existingToast.classList.add('opacity-0');
-        }
-        document.getElementById('interactionInput').value = interaction;
-        document.getElementById('sortForm').submit();
+function submitForm(interaction) {
+    const existingToast = document.getElementById('toast');
+    if (existingToast) {
+        existingToast.classList.add('opacity-0');
     }
+    document.getElementById('interactionInput').value = interaction;
+    document.getElementById('sortForm').submit();
+}
 
-    // キーボードショートカットの完全移植
-    window.addEventListener('keydown', (e) => {
-        // 入力フォーム等にフォーカスが当たっている場合は発火させない
-        if (e.target.tagName === 'INPUT' && e.target.type === 'text') return;
-        
-        if (e.key === '1') submitForm('p');
-        if (e.key === '2') submitForm('n');
-        if (e.key === '3') submitForm('_');
-        if (e.key === 'Escape') {
-            const randomWalkCheck = document.getElementById('randomWalk');
-            if (randomWalkCheck && randomWalkCheck.checked) {
-                submitForm('');
-            }
+window.addEventListener('keydown', (e) => {
+    // 入力フォーム等にフォーカスが当たっている場合は発火させない
+    if (e.target.tagName === 'INPUT' && e.target.type === 'text') return;
+    
+    if (e.key === '1') submitForm('p');
+    if (e.key === '2') submitForm('n');
+    if (e.key === '3') submitForm('_');
+    if (e.key === 'Escape') {
+        if ({{ (int)$randomwalk === 1 ? '1' : '0' }} === 1) {
+            submitForm('');
         }
-    });
-
-    // トースト通知を10秒後に自動的にフェードアウトさせる演出
-    const toast = document.getElementById('toast');
-    if (toast) {
-        setTimeout(() => {
-            toast.style.transition = 'opacity 1s ease';
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 1000);
-        }, 10000);
     }
+});
+
+// トースト通知を10秒後に自動的にフェードアウトさせる演出
+const toast = document.getElementById('toast');
+if (toast) {
+    setTimeout(() => {
+        toast.style.transition = 'opacity 1s ease';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 1000);
+    }, 10000);
+}
 </script>
 @endsection

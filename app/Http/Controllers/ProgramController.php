@@ -138,8 +138,10 @@ class ProgramController extends Controller
     }
 
     // 詳細画面
-    public function show($pgm_uid)
+    public function show(Request $request, $pgm_uid)
     {
+        $randomwalk = (int) $request->query('randomwalk', 0);
+
         $query = "
             WITH tvlike1 AS (
             SELECT *,
@@ -180,7 +182,6 @@ class ProgramController extends Controller
             abort(404);
         }
 
-        $randomwalk = request()->cookie('randomwalk', '0');
         return view('programs.show', compact('program', 'randomwalk'));
     }
 
@@ -196,10 +197,9 @@ class ProgramController extends Controller
         else {
             $request->validate([
                 'interaction' => 'nullable|in:p,n,_',
-                'randomwalk' => 'nullable|in:1',
             ]);
             $interaction = $request->input('interaction');
-            $randomwalk = $request->has('randomwalk') ? 1 : 0;
+            $randomwalk = (int) $request->query('randomwalk', 0);
         }
 
         if (in_array(($interaction ?? ''), ['p','n','_'], true)) {
@@ -339,14 +339,19 @@ class ProgramController extends Controller
         if ($nextProgramUid) {
             // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
             $redirect = redirect()
-                ->route('programs.show', ['pgm_uid' => $nextProgramUid])
-                ->with(['message' => $msg]);
+                ->route('programs.show', [
+                    'pgm_uid' => $nextProgramUid,
+                    'randomwalk' => $randomwalk
+                ])
+                ->with([
+                    'message' => $msg
+                ]);
         } else {
             // 全て処理し終えたら一覧画面へ戻る
             $redirect = redirect()
                 ->route('programs.index')
                 ->with(['message' => $msg . '（すべての未処理番組の仕分けが完了しました！）']);
         }
-        return $redirect->withCookie(cookie('randomwalk', $randomwalk, 43200));
+        return $redirect;
     }
 }
