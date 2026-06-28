@@ -189,16 +189,19 @@ class ProgramController extends Controller
      */
     public function interact(Request $request, $pgm_uid)
     {
-        // 1. 入力値のバリデーション
-        $request->validate([
-            'interaction' => 'nullable|in:p,n,_',
-            'randomwalk' => 'nullable|in:1',
-        ]);
+        if($pgm_uid === 'randomwalk') {
+            $interaction = '';
+            $randomwalk = 1;
+        }
+        else {
+            $request->validate([
+                'interaction' => 'nullable|in:p,n,_',
+                'randomwalk' => 'nullable|in:1',
+            ]);
+            $interaction = $request->input('interaction');
+            $randomwalk = $request->has('randomwalk') ? 1 : 0;
+        }
 
-        $interaction = $request->input('interaction');
-        $randomwalk = $request->has('randomwalk') ? 1 : 0; // チェックボックスがONなら1、OFFなら0
-
-        // 2. データベースの更新
         if (in_array(($interaction ?? ''), ['p','n','_'], true)) {
             DB::statement("
                 INSERT INTO tvlike.interactions (
@@ -326,9 +329,13 @@ class ProgramController extends Controller
 
         // ステータスに応じた日本語メッセージをトースト用に作成
         $interactionLabels = ['p' => '「Positive」に仕分けました', 'n' => '「Negative」に仕分けました', '_' => '「Neutral」に仕分けました', '' => 'スキップしました'];
-        $msg = $interactionLabels[$interaction] ?? '保存しました';
+        if($pgm_uid==='randomwalk') {
+            $msg = '';
+        }
+        else {
+            $msg = $interactionLabels[$interaction] ?? '保存しました';
+        }
 
-        // 4. リダイレクト先の判定
         if ($nextProgramUid) {
             // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
             $redirect = redirect()
