@@ -67,7 +67,7 @@
     </div>
 </div>
 
-@if (session()->has('message'))
+@if (session()->has('message') and session('message'))
     <div id="toast" class="fixed bottom-40 inset-x-4 max-w-sm mx-auto bg-gray-900/95 text-white text-sm px-4 py-3 rounded-xl shadow-2xl z-50 text-center font-medium backdrop-blur-sm transition-opacity duration-1000">
         {{ session('message') }}
     </div>
