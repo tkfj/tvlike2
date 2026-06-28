@@ -94,6 +94,14 @@
 
             <div id="buttonGrid" class="grid {{ ($randomwalk ?? '0') === '1' ? 'grid-cols-4' : 'grid-cols-3' }} gap-3">
                 
+                <button id="skipButton" type="button" onclick="submitForm('')" 
+                        class="{{ ($randomwalk ?? '0') === '1' ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                    <span class="text-base font-bold">スキップ</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">Esc</kbd>
+                    </span>
+                </button>
+
                 <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">興味あり</span>
@@ -115,14 +123,6 @@
                     <span class="text-base font-bold">中立</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">3</kbd>
-                    </span>
-                </button>
-
-                <button id="skipButton" type="button" onclick="submitForm('')" 
-                        class="{{ ($randomwalk ?? '0') === '1' ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-base font-bold">スキップ</span>
-                    <span class="text-xs font-medium mt-0.5">
-                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">4</kbd>
                     </span>
                 </button>
 
@@ -169,7 +169,7 @@
         if (e.key === '1') submitForm('p');
         if (e.key === '2') submitForm('n');
         if (e.key === '3') submitForm('_');
-        if (e.key === '4') {
+        if (e.key === 'Escape') {
             const randomWalkCheck = document.getElementById('randomWalk');
             if (randomWalkCheck && randomWalkCheck.checked) {
                 submitForm('');
