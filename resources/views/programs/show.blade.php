@@ -47,7 +47,7 @@
                 Prediction: {{ $pred_label }}
             </span>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
-                Proba: {{ number_format((float)($program['pred_proba'] ?? 0), 4) }}
+                Proba: {{ $program['pred_proba'] ? number_format($program['pred_proba'], 4) : '------'}}
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
@@ -67,11 +67,15 @@
     </div>
 </div>
 
+@if (session()->has('message'))
+    <div id="toast" class="fixed bottom-40 inset-x-4 max-w-sm mx-auto bg-gray-900/95 text-white text-sm px-4 py-3 rounded-xl shadow-2xl z-50 text-center font-medium backdrop-blur-sm transition-opacity duration-1000">
+        {{ session('message') }}
+    </div>
+@endif
 <div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
     <div class="max-w-md mx-auto">
-        <form id="sortForm" action="?" method="POST" class="space-y-4">
+        <form id="sortForm" action="{{ route('programs.interact', ['pgm_uid' => $program['pgm_uid']]) }}" method="POST" class="space-y-4">
             @csrf
-            <input type="hidden" name="pgm_uid" value="{{ $program['pgm_uid'] }}"> <!-- これ要らないよね -->
             <input type="hidden" name="interaction" id="interactionInput" value="">
             <div class="flex items-center justify-center mb-3">
                 <label class="inline-flex items-center cursor-pointer bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm active:bg-gray-100">
@@ -80,7 +84,7 @@
                         name="randomwalk" 
                         value="1" 
                         form="sortForm"
-                            {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
+                        {{ ($randomwalk ?? '0') === '1' ? 'checked' : '' }}
                         class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
                     <span class="ml-2.5 text-xs font-semibold text-purple-700 tracking-wider flex items-center gap-1">
                         🎲 Random Walk
@@ -88,30 +92,58 @@
                 </label>
             </div>
 
-            <div class="grid grid-cols-3 gap-3">
-
+            <div id="buttonGrid" class="grid {{ ($randomwalk ?? '0') === '1' ? 'grid-cols-4' : 'grid-cols-3' }} gap-3">
+                
                 <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
                     <span class="text-lg font-bold">1</span>
                     <span class="text-xs font-medium mt-0.5">興味あり</span>
                 </button>
 
-                <button type="button" onclick="submitForm('_')" 
-                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">2</span>
-                    <span class="text-xs font-medium mt-0.5">保留</span>
-                </button>
-
                 <button type="button" onclick="submitForm('n')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
-                    <span class="text-lg font-bold">3</span>
+                    <span class="text-lg font-bold">2</span>
                     <span class="text-xs font-medium mt-0.5">興味なし</span>
                 </button>
+
+                <button type="button" onclick="submitForm('_')" 
+                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                    <span class="text-lg font-bold">3</span>
+                    <span class="text-xs font-medium mt-0.5">中立</span>
+                </button>
+
+                <button id="skipButton" type="button" onclick="submitForm('')" 
+                        class="{{ ($randomwalk ?? '0') === '1' ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                    <span class="text-lg font-bold">4</span>
+                    <span class="text-xs font-medium mt-0.5">スキップ</span>
+                </button>
+
             </div>
         </form>
     </div>
 </div>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const randomWalkCheck = document.getElementById('randomWalk');
+        const buttonGrid = document.getElementById('buttonGrid');
+        const skipButton = document.getElementById('skipButton');
+
+        if (randomWalkCheck && buttonGrid && skipButton) {
+            randomWalkCheck.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    // Random Walk ON: スキップボタンを表示し、4列に変更
+                    skipButton.classList.remove('hidden');
+                    buttonGrid.classList.remove('grid-cols-3');
+                    buttonGrid.classList.add('grid-cols-4');
+                } else {
+                    // Random Walk OFF: スキップボタンを非表示にし、3列に変更
+                    skipButton.classList.add('hidden');
+                    buttonGrid.classList.remove('grid-cols-4');
+                    buttonGrid.classList.add('grid-cols-3');
+                }
+            });
+        }
+    });
     function submitForm(interaction) {
         document.getElementById('interactionInput').value = interaction;
         document.getElementById('sortForm').submit();
@@ -125,6 +157,12 @@
         if (e.key === '1') submitForm('p');
         if (e.key === '2') submitForm('n');
         if (e.key === '3') submitForm('_');
+        if (e.key === '4') {
+            const randomWalkCheck = document.getElementById('randomWalk');
+            if (randomWalkCheck && randomWalkCheck.checked) {
+                submitForm('');
+            }
+        }
     });
 
     // トースト通知を10秒後に自動的にフェードアウトさせる演出

@@ -161,6 +161,7 @@ class ProgramController extends Controller
             AND i.pg_end = m.pg_end
             AND i.pg_title = m.pg_title
             WHERE m.pgm_uid = :pgm_uid
+            LIMIT 1
         ";
         $params['pgm_uid'] = $pgm_uid;
         // クエリ実行
@@ -190,7 +191,7 @@ class ProgramController extends Controller
     {
         // 1. 入力値のバリデーション
         $request->validate([
-            'interaction' => 'required|in:p,n,_',
+            'interaction' => 'nullable|in:p,n,_',
             'randomwalk' => 'nullable|in:1',
         ]);
 
@@ -198,69 +199,71 @@ class ProgramController extends Controller
         $randomwalk = $request->has('randomwalk') ? 1 : 0; // チェックボックスがONなら1、OFFなら0
 
         // 2. データベースの更新
-        DB::statement("
-            INSERT INTO tvlike.interactions (
-                pgm_uid,
-                asof,
-                tuner,
-                bsdate,
-                station_id,
-                station_name,
-                pgm_station_name,
-                pid,
-                event_id,
-                pg_start,
-                pg_end,
-                pg_title,
-                pg_detail,
-                genre,
-                link,
-                interaction
-            )
-            SELECT
-                pgm_uid,
-                asof,
-                tuner,
-                bsdate,
-                station_id,
-                station_name,
-                pgm_station_name,
-                pid,
-                event_id,
-                pg_start,
-                pg_end,
-                pg_title,
-                pg_detail,
-                genre,
-                link,
-                :interaction
-            FROM tvguide.programs
-            WHERE
-            pgm_uid = :pgm_uid
-            LIMIT 1
-            ON CONFLICT(pgm_uid)
-            DO UPDATE SET
-                asof = EXCLUDED.asof,
-                tuner = EXCLUDED.tuner,
-                bsdate = EXCLUDED.bsdate,
-                station_id = EXCLUDED.station_id,
-                station_name = EXCLUDED.station_name,
-                pgm_station_name = EXCLUDED.pgm_station_name,
-                pid = EXCLUDED.pid,
-                event_id = EXCLUDED.event_id,
-                pg_start = EXCLUDED.pg_start,
-                pg_end = EXCLUDED.pg_end,
-                pg_title = EXCLUDED.pg_title,
-                pg_detail = EXCLUDED.pg_detail,
-                genre = EXCLUDED.genre,
-                link = EXCLUDED.link,
-                interaction = EXCLUDED.interaction,
-                updated_at = DATETIME('now','localtime')
-            ;
-        ", [
-            'pgm_uid' => $pgm_uid,
-            'interaction' => $interaction
-        ]);
+        if (in_array(($interaction ?? ''), ['p','n','_'], true)) {
+            DB::statement("
+                INSERT INTO tvlike.interactions (
+                    pgm_uid,
+                    asof,
+                    tuner,
+                    bsdate,
+                    station_id,
+                    station_name,
+                    pgm_station_name,
+                    pid,
+                    event_id,
+                    pg_start,
+                    pg_end,
+                    pg_title,
+                    pg_detail,
+                    genre,
+                    link,
+                    interaction
+                )
+                SELECT
+                    pgm_uid,
+                    asof,
+                    tuner,
+                    bsdate,
+                    station_id,
+                    station_name,
+                    pgm_station_name,
+                    pid,
+                    event_id,
+                    pg_start,
+                    pg_end,
+                    pg_title,
+                    pg_detail,
+                    genre,
+                    link,
+                    :interaction
+                FROM tvguide.programs
+                WHERE
+                pgm_uid = :pgm_uid
+                LIMIT 1
+                ON CONFLICT(pgm_uid)
+                DO UPDATE SET
+                    asof = EXCLUDED.asof,
+                    tuner = EXCLUDED.tuner,
+                    bsdate = EXCLUDED.bsdate,
+                    station_id = EXCLUDED.station_id,
+                    station_name = EXCLUDED.station_name,
+                    pgm_station_name = EXCLUDED.pgm_station_name,
+                    pid = EXCLUDED.pid,
+                    event_id = EXCLUDED.event_id,
+                    pg_start = EXCLUDED.pg_start,
+                    pg_end = EXCLUDED.pg_end,
+                    pg_title = EXCLUDED.pg_title,
+                    pg_detail = EXCLUDED.pg_detail,
+                    genre = EXCLUDED.genre,
+                    link = EXCLUDED.link,
+                    interaction = EXCLUDED.interaction,
+                    updated_at = DATETIME('now','localtime')
+                ;
+            ", [
+                'pgm_uid' => $pgm_uid,
+                'interaction' => $interaction
+            ]);
+        }
 
         $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
         $pasttime = $currenttime->modify('-7 days');
@@ -322,7 +325,7 @@ class ProgramController extends Controller
         }
 
         // ステータスに応じた日本語メッセージをトースト用に作成
-        $interactionLabels = ['p' => '「Positive」に仕分けました', 'n' => '「Negative」に仕分けました', '_' => '「保留」にしました'];
+        $interactionLabels = ['p' => '「Positive」に仕分けました', 'n' => '「Negative」に仕分けました', '_' => '「Neutral」に仕分けました', '' => 'スキップしました'];
         $msg = $interactionLabels[$interaction] ?? '保存しました';
 
         // 4. リダイレクト先の判定
@@ -330,12 +333,12 @@ class ProgramController extends Controller
             // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
             $redirect = redirect()
                 ->route('programs.show', ['pgm_uid' => $nextProgramUid])
-                ->with(['message' => $msg, 'pgm_uid' => $pgm_uid]);
+                ->with(['message' => $msg]);
         } else {
             // 全て処理し終えたら一覧画面へ戻る
             $redirect = redirect()
                 ->route('programs.index')
-                ->with('message', $msg . '（すべての未処理番組の仕分けが完了しました！）');
+                ->with(['message' => $msg . '（すべての未処理番組の仕分けが完了しました！）']);
         }
         return $redirect->withCookie(cookie('randomwalk', $randomwalk, 43200));
     }

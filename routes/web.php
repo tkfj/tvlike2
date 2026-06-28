@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProgramController;
 use Illuminate\Support\Facades\Route;
 
+Route::redirect('/', '/programs');
+
 // 一覧画面
 Route::get('/programs', [ProgramController::class, 'index'])->name('programs.index');
 
