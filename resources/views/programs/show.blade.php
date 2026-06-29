@@ -83,22 +83,25 @@
                 @if((int)$randomwalk === 1)
                 <button id="skipButton" type="button" onclick="submitForm('')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-base font-bold">スキップ</span>
+                    <span class="text-base font-bold">Skip</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">Esc</kbd>
                     </span>
                 </button>
                 @else
                 <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}" 
+                    id="backToUrlLink"
                     class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-indigo-700 bg-indigo-50 active:bg-indigo-100 border border-indigo-200 shadow-sm text-center">
-                    <span class="text-xs font-bold leading-tight">一覧へ<br>戻る</span>
-                    <span class="text-[10px] font-medium mt-1 text-indigo-400">Back</span>
+                    <span class="text-base font-bold">Back</span>
+                    <span class="text-xs font-medium mt-0.5">
+                        <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">Esc</kbd>
+                    </span>
                 </a>
                 @endif
 
                 <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
-                    <span class="text-base font-bold">興味あり</span>
+                    <span class="text-base font-bold">Posi</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">1</kbd>
                     </span>
@@ -106,7 +109,7 @@
 
                 <button type="button" onclick="submitForm('n')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
-                    <span class="text-base font-bold">興味なし</span>
+                    <span class="text-base font-bold">Nega</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">2</kbd>
                     </span>
@@ -114,7 +117,7 @@
 
                 <button type="button" onclick="submitForm('_')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
-                    <span class="text-base font-bold">中立</span>
+                    <span class="text-base font-bold">Neut</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">3</kbd>
                     </span>
@@ -144,6 +147,13 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if ({{ (int)$randomwalk === 1 ? '1' : '0' }} === 1) {
             submitForm('');
+        }
+        else {
+            const backLink = document.getElementById('backToUrlLink');
+            if (backLink) {
+                event.preventDefault(); // ブラウザ標準の戻る挙動と重なる場合のバッティング防止
+                backLink.click(); // リンクのクリックを擬似的に発火して、検索条件・ハッシュ維持のまま遷移
+            }
         }
     }
 });
