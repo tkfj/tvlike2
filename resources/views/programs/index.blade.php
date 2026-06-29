@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="space-y-4 divide-y divide-gray-100">
             @foreach ($programs as $prog)
                 @php
-                    $dts = \DateTime::createFromFormat('YmdHi', $prog['pg_start']);
+                    $dts = DateTime::createFromFormat('YmdHi', $prog['pg_start']);
                     $dts_s = $dts ? $dts->format('Y-m-d H:i') : '不明';
-                    $dte = \DateTime::createFromFormat('YmdHi', $prog['pg_end']);
+                    $dte = DateTime::createFromFormat('YmdHi', $prog['pg_end']);
                     
                     $dti_m = 0;
                     if ($dts && $dte) {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
                             <div class="flex items-center gap-1.5">
                                 <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                    True: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                    Act: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
                                 </span>
                                 
                                 <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">

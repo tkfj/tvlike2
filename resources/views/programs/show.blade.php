@@ -36,7 +36,7 @@
         </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
-                True:
+                Act:
                 {{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
@@ -75,11 +75,10 @@
     </div>
 @endif
 <div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
-    <div class="max-w-md mx-auto">
+    <div class="max-w-md mx-auto px-4">
         <form id="sortForm" action="{{ route('programs.interact', array_merge(['pgm_uid' => $program['pgm_uid'], 'randomwalk' => $randomwalk], $backQueryParams ?? [])) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="interaction" id="interactionInput" value="">
-
             <div id="buttonGrid" class="grid grid-cols-4 gap-3">
                 @if((int)$randomwalk === 1)
                 <button id="skipButton" type="button" onclick="submitForm('')" 
