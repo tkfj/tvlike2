@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </h2>
                             <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" 
                                 class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition tracking-wide font-mono">
-                                Detail →
+                                View→
                             </a>
                         </div>
                         
