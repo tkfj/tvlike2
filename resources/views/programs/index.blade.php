@@ -225,15 +225,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         <div class="flex flex-wrap items-center gap-2 text-xs">
                             <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                Interaction: {{ str_replace('_','-',$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                True: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
                             </span>
                             
                             <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                Prediction: {{ str_replace('_', '-', $prog['pred_label'] ?? '_') }}
-                            </span>
-                            
-                            <span class="font-mono text-gray-500 text-[11px]">
-                                Proba: {{ $prog['pred_proba'] ? number_format($prog['pred_proba'], 4) : '------'}}
+                                Pred: {{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
+                                @if($prog['pred_proba'])
+                                ({{ number_format($prog['pred_proba']*100, 1) }}%)
+                                @endif
                             </span>
                             
                             <a href="{{ route('programs.show', $prog['pgm_uid'] ?? '0') }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-[11px] hover:underline">

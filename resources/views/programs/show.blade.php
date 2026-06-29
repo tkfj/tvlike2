@@ -41,13 +41,15 @@
         </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
-                Interaction: {{ str_replace('_', '-', $interactionNext ?? $interaction) }}{{ $interactionStar }}
+                True:
+                {{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
-                Prediction: {{ str_replace('_', '-', $pred_label) }}
-            </span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono bg-gray-100 text-gray-700">
-                Proba: {{ $program['pred_proba'] ? number_format($program['pred_proba'], 4) : '------'}}
+                Pred:
+                {{ str_replace(['p','n','_'], ['P','N','-'], $pred_label) }}
+                @if($program['pred_proba'])
+                ({{ number_format($program['pred_proba']*100, 1) }}%)
+                @endif
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
