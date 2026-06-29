@@ -21,8 +21,6 @@ class ProgramController extends Controller
         $pred_only = $request->input('pred_only', '1');
         $tgtst_only = $request->input('tgtst_only', '1');
 
-        // ベースとなる生クエリ（db1 や db2 のテーブルを指定）
-        // ※テーブル名やカラム名は実際のファイルに合わせて書き換えてください
         $query = "
             WITH tvlike1 AS (
             SELECT *,
@@ -59,35 +57,34 @@ class ProgramController extends Controller
             $params['bsdate'] = $currentdates;
         }
 
-        if (!empty($interaction)) {
-            $intr_conditions = [];
-            
-            foreach ($interaction as $index => $intr_) {
-                $param_name = "intr_" . $index;
-                if ($intr_ === '_') {
-                    $intr_conditions[] = "(interaction_next = '_' OR interaction_next IS NULL AND (m.interaction IS NULL OR m.interaction = '' OR m.interaction = '_'))";
-                } else {
-                    $intr_conditions[] = "(interaction_next = :{$param_name} OR interaction_next IS NULL AND m.interaction = :{$param_name})";
-                    $params[$param_name] = $intr_;
-                }
-            }
+        $intr_conditions = [];
+        if (in_array('_', $interaction)) {
+            $intr_conditions[] = "(interaction_next = '_' OR interaction_next IS NULL AND (m.interaction IS NULL OR m.interaction = '' OR m.interaction = '_'))";
+        }
+        if (in_array('p', $interaction)) {
+            $intr_conditions[] = "(interaction_next = 'p' OR interaction_next IS NULL AND m.interaction = 'p')";
+        }
+        if (in_array('n', $interaction)) {
+            $intr_conditions[] = "(interaction_next = 'n' OR interaction_next IS NULL AND m.interaction = 'n')";
+        }
+        if (!empty($intr_conditions)) {
             $query .= " AND (" . implode(' OR ', $intr_conditions) . ")";
         } else {
             // もし全チェックが外されたら、何も表示しないように絶対偽の条件を挟む
             $query .= " AND 1=0";
         }
-        if (!empty($prediction)) {
-            $pred_conditions = [];
-            
-            foreach ($prediction as $index => $pred_) {
-                $param_name = "pred_" . $index;
-                if ($pred_ === '_') {
-                    $pred_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
-                } else {
-                    $pred_conditions[] = "m.pred_label = :{$param_name}";
-                    $params[$param_name] = $pred_;
-                }
-            }
+
+        $pred_conditions = [];
+        if (in_array('_', $prediction)) {
+            $pred_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
+        }
+        if (in_array('p', $prediction)) {
+            $pred_conditions[] = "m.pred_label = 'p'";
+        }
+        if (in_array('n', $prediction)) {
+            $pred_conditions[] = "m.pred_label = 'n'";
+        }
+        if (!empty($pred_conditions)) {
             $query .= " AND (" . implode(' OR ', $pred_conditions) . ")";
         } else {
             // もし全チェックが外されたら、何も表示しないように絶対偽の条件を挟む

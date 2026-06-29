@@ -94,6 +94,7 @@
                     <input type="checkbox" name="interaction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">Newtral</span>
                 </label>
+                <input type="hidden" name="interaction[]" value="x">
             </div>
         </div>
 
@@ -115,6 +116,7 @@
                     <input type="checkbox" name="prediction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">n/a</span>
                 </label>
+                <input type="hidden" name="prediction[]" value="x">
             </div>
         </div>
 
