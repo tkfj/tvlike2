@@ -161,6 +161,7 @@ class ProgramController extends Controller
     public function show(Request $request, $pgm_uid)
     {
         $randomwalk = (int) $request->query('randomwalk', 0);
+        $backQueryParams = $request->except(['randomwalk']);
 
         $query = "
             WITH tvlike1 AS (
@@ -202,7 +203,7 @@ class ProgramController extends Controller
             abort(404);
         }
         $genre_map = $this->get_genre_map();
-        return view('programs.show', compact('program', 'randomwalk', 'genre_map'));
+        return view('programs.show', compact('program', 'randomwalk', 'backQueryParams', 'genre_map'));
     }
 
     /**

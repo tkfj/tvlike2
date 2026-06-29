@@ -34,7 +34,7 @@
         <div class="flex items-center justify-between">
             <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
             @if((int)$randomwalk === 0)
-                <a href="{{ route('programs.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
                     ← 一覧に戻る
                 </a>
             @endif
@@ -58,7 +58,6 @@
         <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <span class="font-bold text-gray-800">{{ $station ?? '???' }}</span>
             <span class="font-mono text-gray-500">{{ $dts_s }}</span>
-            <span class="text-gray-400">/</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
             @if($genre_lbl)
                 <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-bold tracking-wide">{{ $genre_lbl }}</span>

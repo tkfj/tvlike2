@@ -145,7 +145,22 @@
 
     </div>
 </form>
+<style>
+div:target {
+    animation: returnHighlight 1s ease-out;
+}
 
+@keyframes returnHighlight {
+    0% { 
+        background-color: rgb(238 242 255); /* bg-indigo-50 */
+        border-color: rgb(165 180 252);     /* border-indigo-300 (枠線も少し強調) */
+    } 
+    100% { 
+        background-color: rgb(255 255 255); /* 元のbg-white（または独自の色）に戻す */
+        border-color: rgb(229 231 235);     /* 元のborder-gray-200に戻す */
+    }
+}
+</style>
 <script>
 function toggleFilterMenu() {
     const menu = document.getElementById('advanced-filter-menu');
@@ -177,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="space-y-4 divide-y divide-gray-100">
             @foreach ($programs as $prog)
                 @php
-                    // 元のDateTimeパース＆差分計算ロジックを完全継承
                     $dts = \DateTime::createFromFormat('YmdHi', $prog['pg_start']);
                     $dts_s = $dts ? $dts->format('Y-m-d H:i') : '不明';
                     $dte = \DateTime::createFromFormat('YmdHi', $prog['pg_end']);
@@ -191,61 +205,59 @@ document.addEventListener('DOMContentLoaded', () => {
                     $genre_cd = $prog['genre'] ?? '_';
                     $genre_lbl = $genre_map[$genre_cd] ?? null;
 
-                    // p/n判定用のTailwindクラスマッピング
                     $get_badge_class = function($val) {
                         if ($val === 'p') return 'bg-green-100 text-green-800 border-green-200';
                         if ($val === 'n') return 'bg-red-100 text-red-800 border-red-200';
                         return 'bg-gray-100 text-gray-800 border-gray-200';
                     };
                 @endphp
-
-                <div class="pt-4 first:pt-0 flex flex-col justify-between gap-2">
+                <div id="pgm-{{ $prog['pgm_uid'] }}" class="scroll-mt-20 py-4 first:pt-0 border-b border-gray-100 last:border-0 flex flex-col justify-between gap-2 transition-colors duration-500">
                     <div class="flex-1">
-                        <div class="text-base font-bold text-gray-900 mb-1">
-                            {{ $prog['pg_title'] }}
+                        <div class="flex items-start justify-between gap-4 mb-1">
+                            <h2 class="text-base font-bold text-gray-900 leading-snug">
+                                <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" class="hover:text-indigo-600 transition-colors">
+                                    {{ $prog['pg_title'] }}
+                                </a>
+                            </h2>
+                            <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" 
+                               class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 shrink-0 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition">
+                                詳細 →
+                            </a>
                         </div>
                         
-                        <div class="text-xs text-gray-500 space-x-1 mb-2">
-                            <span>{{ $prog['pgm_station_name'] ?? '' }}</span>
-                            <span>
-                                {{ substr($prog['pg_start'], 0, 4) }}-{{ substr($prog['pg_start'], 4, 2) }}-{{ substr($prog['pg_start'], 6, 2) }}
-                                {{ substr($prog['pg_start'], 8, 2) }}:{{ substr($prog['pg_start'], 10, 2) }}
-                            </span>
-                            <span>{{ $dti_m }}min.</span>
+                        <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-y-1">
+                            <span class="font-bold text-gray-800">{{ str_replace('_',' ',$prog['pgm_station_name'] ?? '???') }}</span>
+                            <span class="font-mono text-gray-500">{{ $dts_s }}</span>
+                            <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
                             @if($genre_lbl)
                                 <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
                             @endif
                         </div>
                         
                         @if($prog['pg_detail'])
-                        <div class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-2">
+                        <div class="text-[13px] text-gray-600 leading-relaxed mb-3 line-clamp-2">
                             {{ $prog['pg_detail'] }}
                         </div>
                         @endif
                         
-                        <div class="flex flex-wrap items-center gap-2 text-xs">
-                            <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                True: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
-                            </span>
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
+                                    True: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                </span>
+                                
+                                <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
+                                    Pred: {{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
+                                    @if($prog['pred_proba'])
+                                    ({{ number_format($prog['pred_proba']*100, 1) }}%)
+                                    @endif
+                                </span>
+                            </div>
                             
-                            <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                Pred: {{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
-                                @if($prog['pred_proba'])
-                                ({{ number_format($prog['pred_proba']*100, 1) }}%)
-                                @endif
-                            </span>
-                            
-                            <a href="{{ route('programs.show', $prog['pgm_uid'] ?? '0') }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-[11px] hover:underline">
-                                タグ付け
-                            </a>
-                            
-                            <span class="text-gray-400 text-[11px] font-mono">
-                                UID: {{ $prog['pgm_uid'] ?? '-' }}
-                            </span>
-                            
-                            <span class="text-gray-400 text-[11px] font-mono">
-                                AsOf: {{ $prog['asof'] ?? '-' }}
-                            </span>
+                            <div class="flex items-center gap-2 text-gray-400 text-[10px] font-mono">
+                                <span>UID: {{ $prog['pgm_uid'] ?? '-' }}</span>
+                                <span>AsOf: {{ $prog['asof'] ?? '-' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
