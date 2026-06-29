@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2 text-gray-400 text-[10px] font-mono">
-                                <span>UID: {{ $prog['pgm_uid'] ?? '-' }}</span>
+                                <span>UID: #{{ $prog['pgm_uid'] ?? '-' }}</span>
                                 <span>AsOf: {{ $prog['asof'] ?? '-' }}</span>
                             </div>
                         </div>
