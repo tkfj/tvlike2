@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Program List - tvlike2')
+@section('title', 'List - tvlike2')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-6 border-b pb-2 text-gray-700">Program List</h1>
+<h1 class="text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
+    / tvlike2 / List
+</h1>
 <form action="{{ route('programs.index') }}" method="GET" class="mb-6 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
     @csrf
     <input type="hidden" id="filter-menu-state" name="filter_menu_state" value="{{ request('filter_menu_state', 'closed') }}">

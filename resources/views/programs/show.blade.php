@@ -32,7 +32,7 @@
 
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
         <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
+            <span class="text-sm text-gray-400 font-mono">/ tvlike2 / UID: #{{ $program['pgm_uid'] }}</span>
         </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
