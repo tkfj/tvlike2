@@ -12,7 +12,8 @@ class ProgramController extends Controller
     // 一覧画面
     public function index(Request $request)
     {
-        $pred_labels = $request->input('labels', ['p']);
+        $interaction = $request->input('interaction', ['p','n','_']);
+        $prediction = $request->input('prediction', ['p']);
         $keyword = $request->input('keyword');
         $sort = $request->input('sort', 'start_asc');
         $limit = $request->input('limit', '500');
@@ -58,19 +59,36 @@ class ProgramController extends Controller
             $params['bsdate'] = $currentdates;
         }
 
-        if (!empty($pred_labels)) {
-            $label_conditions = [];
+        if (!empty($interaction)) {
+            $intr_conditions = [];
             
-            foreach ($pred_labels as $index => $label) {
-                $param_name = "label_" . $index;
-                if ($label === '_') {
-                    $label_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
+            foreach ($interaction as $index => $intr_) {
+                $param_name = "intr_" . $index;
+                if ($intr_ === '_') {
+                    $intr_conditions[] = "(interaction_next = '_' OR interaction_next IS NULL AND (m.interaction IS NULL OR m.interaction = '' OR m.interaction = '_'))";
                 } else {
-                    $label_conditions[] = "m.pred_label = :{$param_name}";
-                    $params[$param_name] = $label;
+                    $intr_conditions[] = "(interaction_next = :{$param_name} OR interaction_next IS NULL AND m.interaction = :{$param_name})";
+                    $params[$param_name] = $intr_;
                 }
             }
-            $query .= " AND (" . implode(' OR ', $label_conditions) . ")";
+            $query .= " AND (" . implode(' OR ', $intr_conditions) . ")";
+        } else {
+            // もし全チェックが外されたら、何も表示しないように絶対偽の条件を挟む
+            $query .= " AND 1=0";
+        }
+        if (!empty($prediction)) {
+            $pred_conditions = [];
+            
+            foreach ($prediction as $index => $pred_) {
+                $param_name = "pred_" . $index;
+                if ($pred_ === '_') {
+                    $pred_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
+                } else {
+                    $pred_conditions[] = "m.pred_label = :{$param_name}";
+                    $params[$param_name] = $pred_;
+                }
+            }
+            $query .= " AND (" . implode(' OR ', $pred_conditions) . ")";
         } else {
             // もし全チェックが外されたら、何も表示しないように絶対偽の条件を挟む
             $query .= " AND 1=0";
@@ -133,7 +151,8 @@ class ProgramController extends Controller
             'future_only',
             'pred_only',
             'tgtst_only',
-            'pred_labels'
+            'prediction',
+            'interaction'
         ));
     }
 
