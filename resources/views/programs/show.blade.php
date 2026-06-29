@@ -43,10 +43,10 @@
         </div>
         <div class="flex items-center justify-between">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
-                Interaction: {{ $interactionNext ?? $interaction }}{{ $interactionStar }}
+                Interaction: {{ str_replace('_', '-', $interactionNext ?? $interaction) }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
-                Prediction: {{ $pred_label }}
+                Prediction: {{ str_replace('_', '-', $pred_label) }}
             </span>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono">
                 Proba: {{ $program['pred_proba'] ? number_format($program['pred_proba'], 4) : '------'}}

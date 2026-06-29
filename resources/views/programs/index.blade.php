@@ -217,17 +217,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             @endif
                         </div>
                         
+                        @if($prog['pg_detail'])
                         <div class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-2">
-                            {{ $prog['pg_detail'] ?? '' }}
+                            {{ $prog['pg_detail'] }}
                         </div>
+                        @endif
                         
                         <div class="flex flex-wrap items-center gap-2 text-xs">
                             <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                Interaction: {{ $prog['interaction_next'] ?? $prog['interaction'] }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                Interaction: {{ str_replace('_','-',$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
                             </span>
                             
                             <span class="px-2 py-0.5 border text-[11px] rounded font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                Prediction: {{ $prog['pred_label'] ?? '_' }}
+                                Prediction: {{ str_replace('_', '-', $prog['pred_label'] ?? '_') }}
                             </span>
                             
                             <span class="font-mono text-gray-500 text-[11px]">
