@@ -33,11 +33,6 @@
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
         <div class="flex items-center justify-between">
             <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
-            @if((int)$randomwalk === 0)
-                <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
-                    ← 一覧に戻る
-                </a>
-            @endif
         </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
@@ -85,15 +80,22 @@
             @csrf
             <input type="hidden" name="interaction" id="interactionInput" value="">
 
-            <div id="buttonGrid" class="grid {{ (int)$randomwalk === 1 ? 'grid-cols-4' : 'grid-cols-3' }} gap-3">
-                
+            <div id="buttonGrid" class="grid grid-cols-4 gap-3">
+                @if((int)$randomwalk === 1)
                 <button id="skipButton" type="button" onclick="submitForm('')" 
-                        class="{{ (int)$randomwalk === 1 ? '' : 'hidden' }} flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
+                        class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">スキップ</span>
                     <span class="text-xs font-medium mt-0.5">
                         <kbd class="inline-block min-w-[18px] text-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-gray-800 bg-white border border-gray-300 border-b-2 rounded shadow-sm select-none">Esc</kbd>
                     </span>
                 </button>
+                @else
+                <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}" 
+                    class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-indigo-700 bg-indigo-50 active:bg-indigo-100 border border-indigo-200 shadow-sm text-center">
+                    <span class="text-xs font-bold leading-tight">一覧へ<br>戻る</span>
+                    <span class="text-[10px] font-medium mt-1 text-indigo-400">Back</span>
+                </a>
+                @endif
 
                 <button type="button" onclick="submitForm('p')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
