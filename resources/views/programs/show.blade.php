@@ -25,7 +25,7 @@
 
 @extends('layouts.app')
 
-@section('title', ($program['pg_title'] ?? '番組詳細') . ' - 仕分け')
+@section('title', ($program['pg_title'] ?? '番組詳細') . ' - tvlike2')
 
 @section('content')
 <div class="w-full md:max-w-md mx-auto px-4 pt-2 pb-32">

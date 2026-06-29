@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', '番組検索一覧')
+@section('title', 'Program List - tvlike2')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-6 border-b pb-2 text-gray-700">番組検索一覧</h1>
+<h1 class="text-2xl font-bold mb-6 border-b pb-2 text-gray-700">Program List</h1>
 <form action="{{ route('programs.index') }}" method="GET" class="mb-6 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
     @csrf
     <input type="hidden" id="filter-menu-state" name="filter_menu_state" value="{{ request('filter_menu_state', 'closed') }}">
@@ -17,11 +17,11 @@
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-sm"
             >
             <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 font-medium text-sm transition shrink-0 active:bg-indigo-800">
-                検索
+                Search
             </button>
             @if(!empty($keyword))
                 <a href="{{ route('programs.index') }}" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 flex items-center text-sm shrink-0">
-                    クリア
+                    Clear
                 </a>
             @endif
         </div>
@@ -220,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </a>
                             </h2>
                             <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" 
-                               class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 shrink-0 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition">
-                                詳細 →
+                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition tracking-wide font-mono">
+                                Detail →
                             </a>
                         </div>
                         
