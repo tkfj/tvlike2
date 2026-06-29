@@ -19,7 +19,7 @@
     $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : str_replace("_", " ", $program['pgm_station_name']);
 
     $genre_cd = $program['genre'] ?? '_';
-//    $genre_lbl = $genre_map[$genre_cd] ?? NULL;
+    $genre_lbl = $genre_map[$genre_cd] ?? NULL;
 
 @endphp
 
@@ -28,44 +28,48 @@
 @section('title', ($program['pg_title'] ?? '番組詳細') . ' - 仕分け')
 
 @section('content')
-<!-- <div class="max-w-md mx-auto px-4 pt-4 pb-32"> -->
-
 <div class="w-full md:max-w-md mx-auto px-4 pt-2 pb-32">
 
-    <div class="flex flex-col space-y-2 border-b border-gray-200 pb-4">
+    <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
         <div class="flex items-center justify-between">
             <span class="text-sm text-gray-400 font-mono">UID: #{{ $program['pgm_uid'] }}</span>
             @if((int)$randomwalk === 0)
-                <a href="{{ route('programs.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                <a href="{{ route('programs.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
                     ← 一覧に戻る
                 </a>
             @endif
         </div>
-        <div class="flex items-center justify-between">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
+        <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
                 Interaction: {{ str_replace('_', '-', $interactionNext ?? $interaction) }}{{ $interactionStar }}
             </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
                 Prediction: {{ str_replace('_', '-', $pred_label) }}
             </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono bg-gray-100 text-gray-700">
                 Proba: {{ $program['pred_proba'] ? number_format($program['pred_proba'], 4) : '------'}}
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
             {{ $program['pg_title'] }}
         </h1>
+        <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <span class="font-bold text-gray-800">{{ $station ?? '???' }}</span>
+            <span class="font-mono text-gray-500">{{ $dts_s }}</span>
+            <span class="text-gray-400">/</span>
+            <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
+            @if($genre_lbl)
+                <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-bold tracking-wide">{{ $genre_lbl }}</span>
+            @endif
+        </div>
     </div>
 
     <div class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">
         @if(!empty($program['pg_detail']))
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p class="whitespace-pre-wrap">{{ $program['pg_detail'] }}</p>
+            <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
+                <p class="whitespace-pre-wrap text-[13px] text-gray-800">{{ $program['pg_detail'] }}</p>
             </div>
         @endif
-        <div class="text-center text-xs text-gray-500 bg-white p-3 rounded-lg border border-gray-200">
-            <div>{{ $station ?? '???' }} {{ $dts_s }} {{ $dti_m }}min.</div>
-        </div>
     </div>
 </div>
 

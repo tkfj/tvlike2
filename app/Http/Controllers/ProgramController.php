@@ -124,6 +124,22 @@ class ProgramController extends Controller
             return (array) $pg;
         });
 
+        $genre_map = $this->get_genre_map();
+        return view('programs.index', compact(
+            'programs',
+            'keyword',
+            'genre_map',
+            'sort',
+            'limit',
+            'future_only',
+            'pred_only',
+            'tgtst_only',
+            'prediction',
+            'interaction'
+        ));
+    }
+
+    private function get_genre_map() {
         $genre_map = [
             '0'=> 'ニュース/報道',
             '1'=> 'スポーツ',
@@ -139,20 +155,8 @@ class ProgramController extends Controller
             'B'=> '福祉',
             'F'=> 'その他',
         ];
-        return view('programs.index', compact(
-            'programs',
-            'keyword',
-            'genre_map',
-            'sort',
-            'limit',
-            'future_only',
-            'pred_only',
-            'tgtst_only',
-            'prediction',
-            'interaction'
-        ));
+        return $genre_map;
     }
-
     // 詳細画面
     public function show(Request $request, $pgm_uid)
     {
@@ -197,8 +201,8 @@ class ProgramController extends Controller
         if (!$program) {
             abort(404);
         }
-
-        return view('programs.show', compact('program', 'randomwalk'));
+        $genre_map = $this->get_genre_map();
+        return view('programs.show', compact('program', 'randomwalk', 'genre_map'));
     }
 
     /**
