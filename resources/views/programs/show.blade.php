@@ -42,13 +42,13 @@
             @endif
         </div>
         <div class="flex items-center justify-between">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $interactionColors['bg'] }}">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
                 Interaction: {{ $interactionNext ?? $interaction }}{{ $interactionStar }}
             </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $predLabelColors['bg'] }}">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
                 Prediction: {{ $pred_label }}
             </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-mono">
                 Proba: {{ $program['pred_proba'] ? number_format($program['pred_proba'], 4) : '------'}}
             </span>
         </div>
@@ -64,7 +64,7 @@
             </div>
         @endif
         <div class="text-center text-xs text-gray-500 bg-white p-3 rounded-lg border border-gray-200">
-            <div>{{ $station ?? '???' }} | {{ $dts_s }} | {{ $dti_m }} min.</div>
+            <div>{{ $station ?? '???' }} {{ $dts_s }} {{ $dti_m }}min.</div>
         </div>
     </div>
 </div>

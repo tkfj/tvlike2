@@ -207,16 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         <div class="text-xs text-gray-500 space-x-1 mb-2">
                             <span>{{ $prog['pgm_station_name'] ?? '' }}</span>
-                            <span>|</span>
                             <span>
                                 {{ substr($prog['pg_start'], 0, 4) }}-{{ substr($prog['pg_start'], 4, 2) }}-{{ substr($prog['pg_start'], 6, 2) }}
                                 {{ substr($prog['pg_start'], 8, 2) }}:{{ substr($prog['pg_start'], 10, 2) }}
                             </span>
-                            <span>|</span>
-                            <span>{{ $dti_m }} min</span>
+                            <span>{{ $dti_m }}min.</span>
                             @if($genre_lbl)
-                                <span>|</span>
-                                <span class="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
+                                <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
                             @endif
                         </div>
                         
@@ -242,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </a>
                             
                             <span class="text-gray-400 text-[11px] font-mono">
-                                Uid: {{ $prog['pgm_uid'] ?? '-' }}
+                                UID: {{ $prog['pgm_uid'] ?? '-' }}
                             </span>
                             
                             <span class="text-gray-400 text-[11px] font-mono">
