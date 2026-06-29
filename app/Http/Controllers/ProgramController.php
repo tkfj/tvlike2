@@ -214,6 +214,7 @@ class ProgramController extends Controller
         if($pgm_uid === 'randomwalk') {
             $interaction = '';
             $randomwalk = 1;
+            $backQueryParams = [];
         }
         else {
             $request->validate([
@@ -221,6 +222,7 @@ class ProgramController extends Controller
             ]);
             $interaction = $request->input('interaction');
             $randomwalk = (int) $request->query('randomwalk', 0);
+            $backQueryParams = $request->except(['interaction', 'randomwalk']);
         }
 
         if (in_array(($interaction ?? ''), ['p','n','_'], true)) {
@@ -360,10 +362,10 @@ class ProgramController extends Controller
         if ($nextProgramUid) {
             // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
             $redirect = redirect()
-                ->route('programs.show', [
+                ->route('programs.show', array_merge([
                     'pgm_uid' => $nextProgramUid,
                     'randomwalk' => $randomwalk
-                ])
+                ], $backQueryParams))
                 ->with([
                     'message' => $msg
                 ]);

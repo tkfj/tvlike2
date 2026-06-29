@@ -81,7 +81,7 @@
 @endif
 <div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
     <div class="max-w-md mx-auto">
-        <form id="sortForm" action="{{ route('programs.interact', ['pgm_uid' => $program['pgm_uid'], 'randomwalk' => $randomwalk]) }}" method="POST" class="space-y-4">
+        <form id="sortForm" action="{{ route('programs.interact', array_merge(['pgm_uid' => $program['pgm_uid'], 'randomwalk' => $randomwalk], $backQueryParams ?? [])) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="interaction" id="interactionInput" value="">
 
