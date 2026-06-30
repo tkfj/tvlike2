@@ -6,7 +6,7 @@
 <h1 class="text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
     / tvlike2 / List
 </h1>
-<form action="{{ route('programs.index') }}" method="GET" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md mx-auto">
+<form action="{{ route('programs.index') }}" method="GET" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md md:max-w-3xl mx-auto">
     @csrf
     <input type="hidden" id="filter-menu-state" name="filter_menu_state" value="{{ request('filter_menu_state', 'closed') }}">
     
@@ -26,13 +26,14 @@
 
             @if(!empty($keyword))
                 <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center">
-                    <a href="{{ route('programs.index') }}" 
-                    class="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-                    aria-label="Clear search">
+                    <button type="button"
+                            onclick="const input = this.form.keyword; input.value = ''; input.focus();"
+                            class="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                            aria-label="Clear search">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
-                    </a>
+                    </button>
                 </div>
             @endif
         </div>
@@ -226,15 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </a>
                             </h2>
                             <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" 
-                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition tracking-wide font-mono">
-                                View→
+                                class="inline-block whitespace-nowrap text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition tracking-wide font-mono">
+                                View<span class="font-sans">&thinsp;</span>→
                             </a>
                         </div>
                         
                         <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-y-1">
-                            <span class="font-bold text-gray-800">{{ str_replace('_',' ',$prog['pgm_station_name'] ?? '???') }}</span>
-                            <span class="font-mono text-gray-500">{{ $dts_s }}</span>
-                            <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
+                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace('_',' ',$prog['pgm_station_name'] ?? '???') }}</span>
+                            <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $dts_s }}</span>
+                            <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
                             @if($genre_lbl)
                                 <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
                             @endif
@@ -248,11 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
                             <div class="flex items-center gap-1.5">
-                                <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
+                                <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
                                     Act: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
                                 </span>
                                 
-                                <span class="px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
+                                <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
                                     Pred: {{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
                                     @if($prog['pred_proba'])
                                     ({{ number_format($prog['pred_proba']*100, 1) }}%)
@@ -260,9 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </span>
                             </div>
                             
-                            <div class="flex items-center gap-2 text-gray-400 text-[10px] font-mono">
-                                <span>UID: #{{ $prog['pgm_uid'] ?? '-' }}</span>
-                                <span>AsOf: {{ $prog['asof'] ?? '-' }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">UID: #{{ $prog['pgm_uid'] ?? '-' }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">AsOf: {{ $prog['asof'] ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
