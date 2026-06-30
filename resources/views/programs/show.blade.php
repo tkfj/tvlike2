@@ -48,7 +48,7 @@
 
 @section('content')
 <div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
-    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>UID:<span class="font-sans">&thinsp;</span>#{{ $program['pgm_uid'] }}
+    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>#{{ $program['pgm_uid'] }}.{{ $program['asof'] }}
 </div>
 <div class="w-full md:max-w-3xl mx-auto px-4 pt-2 pb-32">
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
@@ -71,7 +71,7 @@
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
             @if($genre_lbl)
-                <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-bold tracking-wide">{{ $genre_lbl }}</span>
+                <span class="inline-block whitespace-nowrap font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_lbl }}</span>
             @endif
         </div>
     </div>

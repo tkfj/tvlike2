@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
                             @if($genre_lbl)
-                                <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
+                                <span class="inline-block whitespace-nowrap font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ $genre_lbl }}</span>
                             @endif
                         </div>
                         
@@ -283,8 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2">
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">UID:<span class="font-sans">&thinsp;</span>#{{ $prog['pgm_uid'] ?? '-' }}</span>
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">AsOf:<span class="font-sans">&thinsp;</span>{{ $prog['asof'] ?? '-' }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">#{{ $prog['pgm_uid'] }}.{{ $prog['asof'] ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
