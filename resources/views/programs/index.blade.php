@@ -3,6 +3,25 @@
 @section('title', 'List - tvlike2')
 
 @section('content')
+@php
+/**
+ * キワの確率を100% / 0%に激突させない丸め関数
+ * @param float|null $proba 0.0〜1.0 の生確率
+ * @return string|null フォーマット済みの文字列（例: "99.9", "54.2", "0.1"）
+ */
+$formatProba = function ($proba) {
+    if (is_null($proba)) return null;
+    $p = $proba * 100; // 0.0 〜 100.0% に変換
+    if ($p > 0 && $p < 0.1) {
+        $val = ceil($p * 10) / 10;
+    } elseif ($p > 99.9 && $p < 100) {
+        $val = floor($p * 10) / 10;
+    } else {
+        $val = round($p, 1);
+    }
+    return number_format($val, 1);
+};
+@endphp
 <h1 class="text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
     / tvlike2 / List
 </h1>
@@ -200,7 +219,9 @@ document.addEventListener('DOMContentLoaded', () => {
             @foreach ($programs as $prog)
                 @php
                     $dts = DateTime::createFromFormat('YmdHi', $prog['pg_start']);
-                    $dts_s = $dts ? $dts->format('Y-m-d H:i') : '不明';
+                    $d_s = $dts ? $dts->format('Y-m-d') : '';
+                    $dw_s = $dts ? $dts->format('D') : '';
+                    $ts_s = $dts ? $dts->format('H:i') : '';
                     $dte = DateTime::createFromFormat('YmdHi', $prog['pg_end']);
                     
                     $dti_m = 0;
@@ -233,9 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-y-1">
-                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace('_',' ',$prog['pgm_station_name'] ?? '???') }}</span>
-                            <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $dts_s }}</span>
-                            <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
+                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace("_","\u{2009}",$prog['pgm_station_name'] ?? '???') }}</span>
+                            <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
+                            <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
                             @if($genre_lbl)
                                 <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-medium">{{ $genre_lbl }}</span>
                             @endif
@@ -250,13 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
                             <div class="flex items-center gap-1.5">
                                 <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                    Act: {{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                    Act:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
                                 </span>
                                 
                                 <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                    Pred: {{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
+                                    Pred:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
                                     @if($prog['pred_proba'])
-                                    ({{ number_format($prog['pred_proba']*100, 1) }}%)
+                                    {{ $formatProba($prog['pred_proba']) }}%
                                     @endif
                                 </span>
                             </div>

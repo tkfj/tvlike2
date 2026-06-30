@@ -12,15 +12,34 @@
     $interactionStar = (is_null($interactionNext) or $interaction==$interactionNext) ? '' : '*';
 
     $dts = DateTime::createFromFormat('YmdHi', $program['pg_start']);
-    $dts_s = $dts->format('Y-m-d H:i');
+    $d_s = $dts->format('Y-m-d');
+    $dw_s = $dts->format('D');
+    $t_s = $dts->format('H:i');
     $dte = DateTime::createFromFormat('YmdHi', $program['pg_end']);
     $dti = $dte->diff($dts);
     $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
-    $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : str_replace("_", " ", $program['pgm_station_name']);
+    $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : $program['pgm_station_name'];
 
     $genre_cd = $program['genre'] ?? '_';
     $genre_lbl = $genre_map[$genre_cd] ?? NULL;
 
+    /**
+     * キワの確率を100% / 0%に激突させない丸め関数
+     * @param float|null $proba 0.0〜1.0 の生確率
+     * @return string|null フォーマット済みの文字列（例: "99.9", "54.2", "0.1"）
+     */
+    $formatProba = function ($proba) {
+        if (is_null($proba)) return null;
+        $p = $proba * 100; // 0.0 〜 100.0% に変換
+        if ($p > 0 && $p < 0.0001) {
+            $val = ceil($p * 10000) / 100000;
+        } elseif ($p > 99.9999 && $p < 100) {
+            $val = floor($p * 10000) / 10000;
+        } else {
+            $val = round($p, 4);
+        }
+        return number_format($val, 4);
+    };
 @endphp
 
 @extends('layouts.app')
@@ -36,14 +55,12 @@
         </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
-                Act:
-                {{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
+                Act:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
-                Pred:
-                {{ str_replace(['p','n','_'], ['P','N','-'], $pred_label) }}
+                Pred:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $pred_label) }}
                 @if($program['pred_proba'])
-                ({{ number_format($program['pred_proba']*100, 1) }}%)
+                {{ $formatProba($program['pred_proba']) }}%
                 @endif
             </span>
         </div>
@@ -51,9 +68,9 @@
             {{ $program['pg_title'] }}
         </h1>
         <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <span class="font-bold text-gray-800">{{ $station ?? '???' }}</span>
-            <span class="font-mono text-gray-500">{{ $dts_s }}</span>
-            <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }} min</span>
+            <span class="font-bold text-gray-800">{{ str_replace("_", "\u{2008}", $station) }}</span>
+            <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
+            <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
             @if($genre_lbl)
                 <span class="inline-block whitespace-nowrap px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-bold tracking-wide">{{ $genre_lbl }}</span>
             @endif
