@@ -20,8 +20,7 @@
     $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
     $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : $program['pgm_station_name'];
 
-    $genre_cd = $program['genre'] ?? '_';
-    $genre_lbl = $genre_map[$genre_cd] ?? NULL;
+    $genre_cds = $program['genre'] ? explode(',', $program['genre']) : [];
 
     /**
      * キワの確率を100% / 0%に激突させない丸め関数
@@ -70,8 +69,12 @@
             <span class="font-bold text-gray-800">{{ str_replace("_", "\u{2008}", $station) }}</span>
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-            @if($genre_lbl)
-                <span class="inline-block whitespace-nowrap font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_lbl }}</span>
+            @if($genre_cds)
+                <span class="inline-block whitespace-nowrap gap-0">
+                @foreach ($genre_cds as $genre_cd)
+                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_map[(int)$genre_cd] ?? '?' }}</span>
+                @endforeach
+                </span>
             @endif
         </div>
     </div>

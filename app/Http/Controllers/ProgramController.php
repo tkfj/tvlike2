@@ -32,7 +32,10 @@ class ProgramController extends Controller
             FROM tvlike1
             WHERE interaction_rank = 1
             )
-            SELECT m.*, i.interaction AS interaction_next 
+            SELECT
+              m.*,
+              NULLIF(m.genre, '') AS genre,
+              i.interaction AS interaction_next 
             FROM tvml.tvml AS m
             LEFT OUTER JOIN tvlike0 AS i
             ON i.bsdate = m.bsdate
@@ -174,7 +177,10 @@ class ProgramController extends Controller
             FROM tvlike1
             WHERE interaction_rank = 1
             )
-            SELECT m.*, i.interaction AS interaction_next 
+            SELECT
+              m.*,
+              NULLIF(m.genre, '') AS genre,
+              i.interaction AS interaction_next 
             FROM tvml.tvml AS m
             LEFT OUTER JOIN tvlike0 AS i
             ON i.bsdate = m.bsdate

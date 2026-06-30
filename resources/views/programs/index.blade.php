@@ -230,8 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
                     }
 
-                    $genre_cd = $prog['genre'] ?? '_';
-                    $genre_lbl = $genre_map[$genre_cd] ?? null;
+                    $genre_cds = $prog['genre'] ? explode(',', $prog['genre']) : [];
 
                     $get_badge_class = function($val) {
                         if ($val === 'p') return 'bg-green-100 text-green-800 border-green-200';
@@ -253,12 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             </a>
                         </div>
                         
-                        <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-y-1">
+                        <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                             <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace("_","\u{2009}",$prog['pgm_station_name'] ?? '???') }}</span>
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-                            @if($genre_lbl)
-                                <span class="inline-block whitespace-nowrap font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ $genre_lbl }}</span>
+                            @if($genre_cds)
+                                <span class="inline-block whitespace-nowrap gap-0">
+                                @foreach ($genre_cds as $genre_cd)
+                                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_map[(int)$genre_cd] ?? '?' }}</span>
+                                @endforeach
+                                </span>
                             @endif
                         </div>
                         
