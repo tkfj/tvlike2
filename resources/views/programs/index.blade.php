@@ -6,133 +6,142 @@
 <h1 class="text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
     / tvlike2 / List
 </h1>
-<form action="{{ route('programs.index') }}" method="GET" class="mb-6 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+<form action="{{ route('programs.index') }}" method="GET" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md mx-auto">
     @csrf
     <input type="hidden" id="filter-menu-state" name="filter_menu_state" value="{{ request('filter_menu_state', 'closed') }}">
-    <div class="p-4 flex gap-2 items-center">
-        <div class="flex-1 flex gap-2">
-            <input 
-                type="text" 
+    
+    <div class="w-full px-4 pt-3.5 pb-3 flex items-center gap-2">
+        <div class="relative flex-1 flex items-center">
+            <input type="text" 
                 name="keyword" 
-                value="{{ $keyword ?? '' }}" 
-                placeholder="番組名で検索..." 
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-sm"
-            >
-            <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 font-medium text-sm transition shrink-0 active:bg-indigo-800">
-                Search
+                value="{{ $keyword ?? '' }}"
+                placeholder="Search..." 
+                class="w-full pl-9 pr-9 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono focus:outline-none focus:border-indigo-500 shadow-sm text-gray-800">
+            
+            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-indigo-600 active:scale-95 transition-all focus:outline-none" aria-label="検索を実行">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.604 10.604Z" />
+                </svg>
             </button>
+
             @if(!empty($keyword))
-                <a href="{{ route('programs.index') }}" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 flex items-center text-sm shrink-0">
-                    Clear
-                </a>
+                <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center">
+                    <a href="{{ route('programs.index') }}" 
+                    class="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                    aria-label="Clear search">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </a>
+                </div>
             @endif
         </div>
 
         <button 
             type="button" 
             onclick="toggleFilterMenu()" 
-            class="p-2 bg-gray-50 border border-gray-200 text-gray-500 rounded-lg shadow-sm hover:bg-gray-100 active:bg-gray-200 transition shrink-0 flex items-center justify-center"
+            class="h-[34px] w-[34px] bg-gray-50 border border-gray-200 text-gray-500 rounded-xl shadow-sm hover:bg-gray-100 active:bg-gray-200 transition shrink-0 flex items-center justify-center focus:outline-none"
             aria-label="詳細検索条件を開閉"
         >
-            <svg id="filter-icon" class="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            <svg id="filter-icon" class="h-4 w-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
         </button>
     </div>
 
-    <div id="advanced-filter-menu" class="hidden border-t border-gray-100 bg-slate-50/50 p-4 space-y-4 text-sm">
+    <div id="advanced-filter-menu" class="hidden border-t border-gray-100 bg-slate-50/40 p-4 pt-3.5 space-y-3.5 text-sm">
         
-        <div class="flex items-center gap-3 flex-wrap">
-            <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-gray-700 select-none bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm active:bg-gray-50">
+        <div class="flex items-center gap-2 flex-wrap">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
                 <input type="hidden" name="future_only" value="0"><input 
                     type="checkbox" 
                     name="future_only" 
                     value="1" 
                     onchange="this.form.submit()"
                     {{ ($future_only ?? '1') === '1' ? 'checked' : '' }}
-                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span class="text-gray-700">未来日</span>
+                <span>未来日</span>
             </label>
-            <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-gray-700 select-none bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm active:bg-gray-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
                 <input type="hidden" name="pred_only" value="0"><input 
                     type="checkbox" 
                     name="pred_only" 
                     value="1" 
                     onchange="this.form.submit()"
                     {{ ($pred_only ?? '1') === '1' ? 'checked' : '' }}
-                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span class="text-gray-700">予測済</span>
+                <span>予測済</span>
             </label>
-            <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-gray-700 select-none bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm active:bg-gray-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
                 <input type="hidden" name="tgtst_only" value="0"><input 
                     type="checkbox" 
                     name="tgtst_only" 
                     value="1" 
                     onchange="this.form.submit()"
                     {{ ($tgtst_only ?? '1') === '1' ? 'checked' : '' }}
-                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span class="text-gray-700">視聴可能局</span>
+                <span>視聴可能局</span>
             </label>
         </div>
 
-        <div class="flex items-center gap-3 flex-wrap">
-            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Act:</span>
+        <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-2.5 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
+                <span class="text-[10px] text-gray-400 font-bold font-mono uppercase tracking-wider shrink-0">Act:</span>
                 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="interaction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Posi</span>
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                    <input type="checkbox" name="interaction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $interaction) ? 'checked' : '' }} class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[10px] font-mono font-bold">Posi</span>
                 </label>
 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Nega</span>
+                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[10px] font-mono font-bold">Nega</span>
                 </label>
 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">None</span>
+                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[10px] font-mono">None</span>
                 </label>
                 <input type="hidden" name="interaction[]" value="x">
             </div>
 
-            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Pred:</span>
+            <div class="flex items-center gap-2.5 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
+                <span class="text-[10px] text-gray-400 font-bold font-mono uppercase tracking-wider shrink-0">Pred:</span>
                 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Posi</span>
+                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[10px] font-mono font-bold">Posi</span>
                 </label>
 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Nega</span>
+                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[10px] font-mono font-bold">Nega</span>
                 </label>
 
-                <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
+                <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">n/a </span>
+                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[10px] font-mono">n/a</span>
                 </label>
                 <input type="hidden" name="prediction[]" value="x">
             </div>
         </div>
 
-        <div class="flex items-center gap-3 flex-wrap">
-            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <label for="sort" class="text-xs text-gray-400 font-medium shrink-0">Sort:</label>
-                <select name="sort" id="sort" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
+        <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
+                <label for="sort" class="text-[11px] text-gray-400 font-medium font-mono shrink-0">Sort:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer font-medium">
                     <option value="start_desc" {{ $sort === 'start_desc' ? 'selected' : '' }}>放送開始が新しい順</option>
                     <option value="start_asc" {{ $sort === 'start_asc' ? 'selected' : '' }}>放送開始が古い順</option>
                     <option value="prob_desc" {{ $sort === 'prob_desc' ? 'selected' : '' }}>予測確率（Prob）が高い順</option>
                     <option value="prob_asc" {{ $sort === 'prob_asc' ? 'selected' : '' }}>予測確率（Prob）が低い順</option>
                 </select>
             </div>
-            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <label for="limit" class="text-xs text-gray-400 font-medium shrink-0">Count:</label>
-                <select name="limit" id="limit" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
+            <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
+                <label for="limit" class="text-[11px] text-gray-400 font-medium font-mono shrink-0">Count:</label>
+                <select name="limit" id="limit" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer font-medium">
                     <option value="100" {{ $limit === '100' ? 'selected' : '' }}>100</option>
                     <option value="500" {{ $limit === '500' ? 'selected' : '' }}>500</option>
                     <option value="2000" {{ $limit === '2000' ? 'selected' : '' }}>2000</option>
