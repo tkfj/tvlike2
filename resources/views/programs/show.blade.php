@@ -31,14 +31,14 @@
     $formatProba = function ($proba) {
         if (is_null($proba)) return null;
         $p = $proba * 100; // 0.0 〜 100.0% に変換
-        if ($p > 0 && $p < 0.0001) {
-            $val = ceil($p * 10000) / 100000;
-        } elseif ($p > 99.9999 && $p < 100) {
-            $val = floor($p * 10000) / 10000;
+        if ($p > 0 && $p < 0.001) {
+            $val = ceil($p * 1000) / 10000;
+        } elseif ($p > 99.999 && $p < 100) {
+            $val = floor($p * 1000) / 1000;
         } else {
-            $val = round($p, 4);
+            $val = round($p, 3);
         }
-        return number_format($val, 4);
+        return number_format($val, 3);
     };
 @endphp
 

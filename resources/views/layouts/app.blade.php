@@ -12,50 +12,66 @@
     </form>
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-            <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition">
-                📺&thinsp;tvlike&thinsp;❤️
+            <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition font-mono">
+                📺<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>❤️
             </a>
 
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{{ route('programs.index') }}" class="hover:text-indigo-200 transition">List</a>
+            <nav class="hidden md:flex items-center space-x-6 text-xs font-semibold font-mono tracking-wide">
+                <a href="{{ route('programs.index') }}" class="flex items-center hover:text-indigo-200 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 opacity-80">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 8.25V6ZM3.75 15.75a2.25 2.25 0 0 1 2.25-2.25h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25?" />
+                    </svg><span class="font-sans">&thinsp;</span>List
+                </a>
+
                 <a href="#" 
                     onclick="event.preventDefault(); document.getElementById('nav-randomwalk-form').submit();" 
-                    class="hover:text-indigo-200 transition">
-                    🎲&thinsp;Random&thinsp;Walk
+                    class="flex items-center hover:text-indigo-200 transition">
+                    🎲<span class="font-sans">&thinsp;</span>Random<span class="font-sans">&thinsp;</span>Walk
                 </a>
             </nav>
 
             <button 
                 type="button" 
                 onclick="toggleMenu()" 
-                class="block md:hidden p-2 rounded-md hover:bg-indigo-700 focus:outline-none transition"
+                class="block md:hidden p-2 rounded-xl hover:bg-indigo-700 focus:outline-none transition"
                 aria-label="open menu"
             >
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
         </div>
     </header>
 
     <div id="mobile-menu" class="hidden fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-black/50" onclick="toggleMenu()"></div>
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-xs" onclick="toggleMenu()"></div>
         
-        <nav class="fixed top-0 right-0 bottom-0 w-64 bg-white p-6 shadow-xl flex flex-col space-y-4">
-            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                <span class="font-bold text-gray-700">menu</span>
-                <button type="button" onclick="toggleMenu()" class="text-gray-400 hover:text-gray-600">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <nav class="fixed top-0 right-0 bottom-0 w-64 bg-white p-4 shadow-xl flex flex-col">
+            <div class="flex items-center justify-end pb-2 mb-3 border-b border-gray-100">
+                <button type="button" onclick="toggleMenu()" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition focus:outline-none">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <a href="{{ route('programs.index') }}" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">List</a>
-            <a href="#" 
-                onclick="event.preventDefault(); toggleMenu(); document.getElementById('nav-randomwalk-form').submit();" 
-                class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">
-                🎲 Random Walk
-            </a>
+
+            <div class="space-y-1 flex-1">
+                <a href="{{ route('programs.index') }}" 
+                   onclick="toggleMenu()" 
+                   class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
+                    <span class="mr-2.5 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 8.25V6ZM3.75 15.75a2.25 2.25 0 0 1 2.25-2.25h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25?" />
+                        </svg>
+                    </span>List
+                </a>
+
+                <a href="#" 
+                   onclick="event.preventDefault(); toggleMenu(); document.getElementById('nav-randomwalk-form').submit();" 
+                   class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
+                    <span class="mr-2 text-base shrink-0 select-none">🎲</span>Random<span class="font-sans">&thinsp;</span>Walk
+                </a>
+            </div>
         </nav>
     </div>
 
