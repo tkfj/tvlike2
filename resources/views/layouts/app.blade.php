@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'tvlike2')</title>
+    <title>@yield('title', 'tvlike')</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
@@ -13,7 +13,7 @@
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition">
-                📺 tvlike2 ❤️
+                📺 tvlike ❤️
             </a>
 
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
@@ -64,7 +64,6 @@
     </main>
 
     <script>
-        // フルバージョン標準の classList 操作に戻す
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');

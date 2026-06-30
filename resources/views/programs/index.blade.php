@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'List - tvlike2')
+@section('title', 'List - tvlike')
 
 @section('content')
 @php
@@ -22,8 +22,8 @@ $formatProba = function ($proba) {
     return number_format($val, 1);
 };
 @endphp
-<h1 class="text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
-    / tvlike2 / List
+<h1 class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
+    / tvlike / List
 </h1>
 <form action="{{ route('programs.index') }}" method="GET" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md md:max-w-3xl mx-auto">
     @csrf

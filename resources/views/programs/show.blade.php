@@ -44,15 +44,14 @@
 
 @extends('layouts.app')
 
-@section('title', ($program['pg_title'] ?? '番組詳細') . ' - tvlike2')
+@section('title', ($program['pg_title'] ?? '番組詳細') . ' - tvlike')
 
 @section('content')
-<div class="w-full md:max-w-md mx-auto px-4 pt-2 pb-32">
-
+<div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
+    / tvlike / UID: #{{ $program['pgm_uid'] }}
+</div>
+<div class="w-full md:max-w-3xl mx-auto px-4 pt-2 pb-32">
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
-        <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-400 font-mono">/ tvlike2 / UID: #{{ $program['pgm_uid'] }}</span>
-        </div>
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
                 Act:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
