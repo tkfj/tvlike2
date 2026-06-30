@@ -80,68 +80,63 @@
 
         <div class="flex items-center gap-3 flex-wrap">
             <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Interaction:</span>
+                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Act:</span>
                 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Positive</span>
+                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Posi</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Negative</span>
+                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Nega</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">Newtral</span>
+                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">None</span>
                 </label>
                 <input type="hidden" name="interaction[]" value="x">
             </div>
-        </div>
 
-        <div class="flex items-center gap-3 flex-wrap">
             <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Prediction:</span>
+                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider shrink-0">Pred:</span>
                 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Positive</span>
+                    <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[11px]">Posi</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Negative</span>
+                    <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[11px]">Nega</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">n/a</span>
+                    <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[11px]">n/a </span>
                 </label>
                 <input type="hidden" name="prediction[]" value="x">
             </div>
         </div>
 
         <div class="flex items-center gap-3 flex-wrap">
-            <div class="flex items-center gap-3 justify-start lg:justify-end overflow-x-auto">
-                <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-gray-200 shadow-sm">
-                    <label for="sort" class="text-xs text-gray-400 font-medium shrink-0">Sort:</label>
-                    <select name="sort" id="sort" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
-                        <option value="start_desc" {{ $sort === 'start_desc' ? 'selected' : '' }}>放送開始が新しい順</option>
-                        <option value="start_asc" {{ $sort === 'start_asc' ? 'selected' : '' }}>放送開始が古い順</option>
-                        <option value="prob_desc" {{ $sort === 'prob_desc' ? 'selected' : '' }}>予測確率（Prob）が高い順</option>
-                        <option value="prob_asc" {{ $sort === 'prob_asc' ? 'selected' : '' }}>予測確率（Prob）が低い順</option>
-                    </select>
-                </div>
-
-                <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-gray-200 shadow-sm">
-                    <label for="limit" class="text-xs text-gray-400 font-medium shrink-0">Count:</label>
-                    <select name="limit" id="limit" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
-                        <option value="100" {{ $limit === '100' ? 'selected' : '' }}>100</option>
-                        <option value="500" {{ $limit === '500' ? 'selected' : '' }}>500</option>
-                        <option value="2000" {{ $limit === '2000' ? 'selected' : '' }}>2000</option>
-                    </select>
-                </div>
+            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
+                <label for="sort" class="text-xs text-gray-400 font-medium shrink-0">Sort:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
+                    <option value="start_desc" {{ $sort === 'start_desc' ? 'selected' : '' }}>放送開始が新しい順</option>
+                    <option value="start_asc" {{ $sort === 'start_asc' ? 'selected' : '' }}>放送開始が古い順</option>
+                    <option value="prob_desc" {{ $sort === 'prob_desc' ? 'selected' : '' }}>予測確率（Prob）が高い順</option>
+                    <option value="prob_asc" {{ $sort === 'prob_asc' ? 'selected' : '' }}>予測確率（Prob）が低い順</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm overflow-x-auto">
+                <label for="limit" class="text-xs text-gray-400 font-medium shrink-0">Count:</label>
+                <select name="limit" id="limit" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer">
+                    <option value="100" {{ $limit === '100' ? 'selected' : '' }}>100</option>
+                    <option value="500" {{ $limit === '500' ? 'selected' : '' }}>500</option>
+                    <option value="2000" {{ $limit === '2000' ? 'selected' : '' }}>2000</option>
+                </select>
             </div>
         </div>
 
