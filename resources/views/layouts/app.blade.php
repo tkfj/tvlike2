@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'tvlike')</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
     <form id="nav-randomwalk-form" action="{{ route('programs.interact', 'randomwalk') }}" method="POST" class="hidden">
@@ -12,10 +13,14 @@
     </form>
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-            <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition font-mono">
-                📺<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>❤️
+            <a href="{{ route('programs.index') }}" class="flex items-center gap-1.5 font-bold text-lg tracking-wider hover:opacity-90 transition font-mono">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" width="24" height="24">
+                    <rect x="2" y="6" width="20" height="14" rx="3" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 3l5 3 5-3" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 17.0C10.5 15.3 8.1 13.1 8.1 11.2c0-1.4 1.05-2.45 2.45-2.45.79 0 1.55.37 2 .98.45-.61 1.21-.98 2-.98 1.4 0 2.45 1.05 2.45 2.45 0 1.9-2.4 4.1-3.9 5.8z" />
+                </svg>
+                tvlike
             </a>
-
             <nav class="hidden md:flex items-center space-x-6 text-xs font-semibold font-mono tracking-wide">
                 <a href="{{ route('programs.index') }}" class="flex items-center hover:text-indigo-200 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 opacity-80">
