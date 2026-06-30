@@ -13,15 +13,15 @@
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="{{ route('programs.index') }}" class="font-bold text-lg tracking-wider hover:opacity-90 transition">
-                📺 tvlike ❤️
+                📺&thinsp;tvlike&thinsp;❤️
             </a>
 
             <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{{ route('programs.index') }}" class="hover:text-indigo-200 transition">Program List</a>
+                <a href="{{ route('programs.index') }}" class="hover:text-indigo-200 transition">List</a>
                 <a href="#" 
                     onclick="event.preventDefault(); document.getElementById('nav-randomwalk-form').submit();" 
                     class="hover:text-indigo-200 transition">
-                    🎲 Random Walk
+                    🎲&thinsp;Random&thinsp;Walk
                 </a>
             </nav>
 
@@ -50,7 +50,7 @@
                     </svg>
                 </button>
             </div>
-            <a href="{{ route('programs.index') }}" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">Program List</a>
+            <a href="{{ route('programs.index') }}" onclick="toggleMenu()" class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">List</a>
             <a href="#" 
                 onclick="event.preventDefault(); toggleMenu(); document.getElementById('nav-randomwalk-form').submit();" 
                 class="block font-medium py-2 px-3 rounded hover:bg-gray-100 text-gray-800">

@@ -48,7 +48,7 @@
 
 @section('content')
 <div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
-    / tvlike / UID: #{{ $program['pgm_uid'] }}
+    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>UID:<span class="font-sans">&thinsp;</span>#{{ $program['pgm_uid'] }}
 </div>
 <div class="w-full md:max-w-3xl mx-auto px-4 pt-2 pb-32">
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">

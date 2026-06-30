@@ -23,7 +23,7 @@ $formatProba = function ($proba) {
 };
 @endphp
 <h1 class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
-    / tvlike / List
+    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>List
 </h1>
 <form action="{{ route('programs.index') }}" method="GET" class="mb-5 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md md:max-w-3xl mx-auto">
     @csrf
@@ -72,7 +72,7 @@ $formatProba = function ($proba) {
     <div id="advanced-filter-menu" class="hidden border-t border-gray-100 bg-slate-50/40 p-4 pt-3.5 space-y-3.5 text-sm">
         
         <div class="flex items-center gap-2 flex-wrap">
-            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50 font-mono">
                 <input type="hidden" name="future_only" value="0"><input 
                     type="checkbox" 
                     name="future_only" 
@@ -81,9 +81,9 @@ $formatProba = function ($proba) {
                     {{ ($future_only ?? '1') === '1' ? 'checked' : '' }}
                     class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span>未来日</span>
+                <span>Today+</span>
             </label>
-            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50 font-mono">
                 <input type="hidden" name="pred_only" value="0"><input 
                     type="checkbox" 
                     name="pred_only" 
@@ -92,9 +92,9 @@ $formatProba = function ($proba) {
                     {{ ($pred_only ?? '1') === '1' ? 'checked' : '' }}
                     class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span>予測済</span>
+                <span>Pred</span>
             </label>
-            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50 font-mono">
                 <input type="hidden" name="tgtst_only" value="0"><input 
                     type="checkbox" 
                     name="tgtst_only" 
@@ -103,13 +103,13 @@ $formatProba = function ($proba) {
                     {{ ($tgtst_only ?? '1') === '1' ? 'checked' : '' }}
                     class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span>視聴可能局</span>
+                <span>MyCh</span>
             </label>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
             <div class="flex items-center gap-2.5 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-[10px] text-gray-400 font-bold font-mono uppercase tracking-wider shrink-0">Act:</span>
+                <span class="text-[11px] text-gray-400 font-bold font-mono tracking-wider shrink-0">Act:</span>
                 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="interaction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $interaction) ? 'checked' : '' }} class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
@@ -129,7 +129,7 @@ $formatProba = function ($proba) {
             </div>
 
             <div class="flex items-center gap-2.5 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
-                <span class="text-[10px] text-gray-400 font-bold font-mono uppercase tracking-wider shrink-0">Pred:</span>
+                <span class="text-[11px] text-gray-400 font-bold font-mono tracking-wider shrink-0">Pred:</span>
                 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
                     <input type="checkbox" name="prediction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
@@ -151,16 +151,16 @@ $formatProba = function ($proba) {
 
         <div class="flex items-center gap-2 flex-wrap">
             <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
-                <label for="sort" class="text-[11px] text-gray-400 font-medium font-mono shrink-0">Sort:</label>
+                <label for="sort" class="text-[11px] text-gray-400 font-mono font-bold shrink-0">Sort:</label>
                 <select name="sort" id="sort" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer font-medium">
-                    <option value="start_desc" {{ $sort === 'start_desc' ? 'selected' : '' }}>放送開始が新しい順</option>
-                    <option value="start_asc" {{ $sort === 'start_asc' ? 'selected' : '' }}>放送開始が古い順</option>
-                    <option value="prob_desc" {{ $sort === 'prob_desc' ? 'selected' : '' }}>予測確率（Prob）が高い順</option>
-                    <option value="prob_asc" {{ $sort === 'prob_asc' ? 'selected' : '' }}>予測確率（Prob）が低い順</option>
+                    <option value="start_desc" {{ $sort === 'start_desc' ? 'selected' : '' }}>Newer</option>
+                    <option value="start_asc" {{ $sort === 'start_asc' ? 'selected' : '' }}>Older</option>
+                    <option value="prob_desc" {{ $sort === 'prob_desc' ? 'selected' : '' }}>Higher</option>
+                    <option value="prob_asc" {{ $sort === 'prob_asc' ? 'selected' : '' }}>Lower</option>
                 </select>
             </div>
             <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
-                <label for="limit" class="text-[11px] text-gray-400 font-medium font-mono shrink-0">Count:</label>
+                <label for="limit" class="text-[11px] text-gray-400 font-mono font-bold shrink-0">Count:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="bg-transparent border-none p-0 text-xs text-gray-700 focus:ring-0 cursor-pointer font-medium">
                     <option value="100" {{ $limit === '100' ? 'selected' : '' }}>100</option>
                     <option value="500" {{ $limit === '500' ? 'selected' : '' }}>500</option>
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-<div class="bg-white shadow rounded-lg overflow-hidden p-6">
+<div class="w-full max-w-md md:max-w-3xl mx-auto bg-white shadow rounded-xl overflow-hidden p-4 md:p-6">
     @if (empty($programs) || count($programs) === 0)
         <p class="text-center text-gray-400 py-8">該当する番組は見つかりませんでした。</p>
     @else
@@ -283,8 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2">
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">UID: #{{ $prog['pgm_uid'] ?? '-' }}</span>
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">AsOf: {{ $prog['asof'] ?? '-' }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">UID:<span class="font-sans">&thinsp;</span>#{{ $prog['pgm_uid'] ?? '-' }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">AsOf:<span class="font-sans">&thinsp;</span>{{ $prog['asof'] ?? '-' }}</span>
                             </div>
                         </div>
                     </div>
