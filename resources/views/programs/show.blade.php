@@ -19,8 +19,8 @@
     $dti_m = intdiv($program['duration'], 60*1000);
 
     $genre_filtered = $program['genres'] ? array_filter(json_decode($program['genres'], true), function($p) {
-        // 番組のジャンルが制御情報のものを除く
-        return $p['lv1']!=14;
+        // 番組のジャンルが制御情報または字幕/音声解説のものを除く
+        return $p['lv1']!=14 && !($p['lv1']==11 && ($p['lv2']==5 || $p['lv2']==6));
     }) : [];
     $genre_labels = array_map(function($p) {
         return $p['lv1_label'] . '：' . $p['lv2_label'];
@@ -51,7 +51,7 @@
 
 @section('content')
 <div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
-    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>#{{ $program['pgm_uid'] }}.{{ $program['asof'] }}
+    /<span class="font-sans">&thinsp;</span>tvlike<span class="font-sans">&thinsp;</span>/<span class="font-sans">&thinsp;</span>#{{ $program['pgm_uid'] }}.{{ intdiv($program['start_at'],10000) }}
 </div>
 <div class="w-full md:max-w-3xl mx-auto px-4 pt-2 pb-32">
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
@@ -83,10 +83,25 @@
         </div>
     </div>
 
-    <div class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">
+    <div class="mt-4 space-y-4 text-[13px] text-gray-700 leading-relaxed">
         @if(!empty($program['pgm_description']))
-            <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
-                <p class="whitespace-pre-wrap text-[13px] text-gray-800">{{ $program['pgm_description'] }}</p>
+            <div class="bg-slate-50/50 rounded-xl p-4 border border-slate-100 shadow-sm">
+                <p class="whitespace-pre-wrap text-gray-800 leading-normal">{{ $program['pgm_description'] }}</p>
+            </div>
+        @endif
+
+        @if(!empty($program['extended']))
+            <div class="bg-slate-50/30 rounded-xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-100">
+                @foreach (json_decode($program['extended'], true) as $ex_key => $ex_val)
+                    <div class="p-4 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-5">
+                        <dt class="text-[12px] font-bold text-slate-600 font-sans tracking-wider inline-flex items-center border-l-2 border-slate-400 pl-2 self-start sm:w-full h-5 sm:h-auto">
+                            {{ Normalizer::normalize($ex_key, Normalizer::FORM_KC) }}
+                        </dt>
+                        <dd class="mt-1.5 text-gray-800 sm:mt-0 sm:col-span-3">
+                            <p class="whitespace-pre-wrap leading-normal text-[13px]">{{ Normalizer::normalize($ex_val, Normalizer::FORM_KC) }}</p>
+                        </dd>
+                    </div>
+                @endforeach
             </div>
         @endif
     </div>

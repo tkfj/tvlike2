@@ -226,8 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     $dti_m = intdiv($prog['duration'],60*1000);
 
                     $genre_filtered = $prog['genres'] ? array_filter(json_decode($prog['genres'], true), function($p) {
-                        // 番組のジャンルが制御情報のものを除く
-                        return $p['lv1']!=14;
+                        // 番組のジャンルが制御情報または字幕/音声解説のものを除く
+                        return $p['lv1']!=14 && !($p['lv1']==11 && ($p['lv2']==5 || $p['lv2']==6));
                     }) : [];
                     $genre_labels = array_map(function($p) {
                         return $p['lv1_label'] . '：' . $p['lv2_label'];
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2">
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">#{{ $prog['pgm_uid'] }}.{{ $prog['start_at'] }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">#{{ $prog['pgm_uid'] }}.{{ intdiv($prog['start_at'],10000) }}</span>
                             </div>
                         </div>
                     </div>
