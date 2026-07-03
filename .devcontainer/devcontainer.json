@@ -1,5 +1,5 @@
 {
-    "name": "tvml2",
+    "name": "tvlike2",
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspace",

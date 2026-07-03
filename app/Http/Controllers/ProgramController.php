@@ -12,8 +12,8 @@ class ProgramController extends Controller
     // 一覧画面
     public function index(Request $request)
     {
-        $interaction = $request->input('interaction', ['p','n','_']);
-        $prediction = $request->input('prediction', ['p']);
+        $interaction = $request->input('interaction', ['P','N','-']);
+        $prediction = $request->input('prediction', ['P']);
         $keyword = $request->input('keyword');
         $sort = $request->input('sort', 'start_asc');
         $limit = $request->input('limit', '500');
@@ -22,53 +22,43 @@ class ProgramController extends Controller
         $tgtst_only = $request->input('tgtst_only', '1');
 
         $query = "
-            WITH tvlike1 AS (
-            SELECT *,
-            ROW_NUMBER() OVER(PARTITION BY bsdate, tuner, station_id, pg_start, pg_end, pg_title ORDER BY asof DESC) AS interaction_rank
-            FROM tvlike.interactions
-            ),
-            tvlike0 AS (
-            SELECT *
-            FROM tvlike1
-            WHERE interaction_rank = 1
-            )
             SELECT
-              m.*,
-              NULLIF(m.genre, '') AS genre,
-              i.interaction AS interaction_next 
-            FROM tvml.tvml AS m
-            LEFT OUTER JOIN tvlike0 AS i
-            ON i.bsdate = m.bsdate
-            AND i.tuner = m.tuner
-            AND i.station_id = m.station_id
-            AND i.pg_start = m.pg_start
-            AND i.pg_end = m.pg_end
-            AND i.pg_title = m.pg_title
+              tvml.*,
+              UPPER(tvml.interaction) as interaction,
+              tvlike.interaction AS interaction_next 
+            FROM tvmldb.tvml AS tvml
+            LEFT OUTER JOIN tvlikedb.tvlike AS tvlike
+            ON tvlike.pgm_uid = tvml.pgm_uid
+            AND tvlike.start_at > tvml.start_at - 8*24*60*60*1000
+            AND tvlike.start_at < tvml.start_at + 8*24*60*60*1000
+            AND tvlike.pgm_title = tvml.pgm_title
             WHERE 1=1
         ";
         $params = [];
         if($tgtst_only === '1') {
-            $query .= " AND m.is_target=1";
+            $query .= " AND tvml.is_target_channel=1";
         }
         if($pred_only === '1') {
-            $query .= " AND m.pred_label IN ('p','n')";
+            $query .= " AND tvml.pred_label IN ('P','N')";
         }
         if($future_only === '1') {
-            $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
-            $currentdates = $currenttime->format('Ymd');
-            $query .= " AND m.bsdate >= :bsdate";
-            $params['bsdate'] = $currentdates;
+            $tz = new DateTimeZone('Asia/Tokyo');
+            $currenttime = new DateTimeImmutable('now', $tz);
+            $currentdate = $currenttime->setTime(0,0,0,0);
+            $currentepoch_ms = $currentdate->getTimestamp() * 1000; 
+            $query .= " AND tvml.start_at >= :current_start";
+            $params['current_start'] = $currentepoch_ms;
         }
 
         $intr_conditions = [];
-        if (in_array('_', $interaction)) {
-            $intr_conditions[] = "(interaction_next = '_' OR interaction_next IS NULL AND (m.interaction IS NULL OR m.interaction = '' OR m.interaction = '_'))";
+        if (in_array('-', $interaction)) {
+            $intr_conditions[] = "(interaction_next = '-' OR interaction_next IS NULL AND (tvml.interaction IS NULL OR tvml.interaction = '' OR tvml.interaction = '-'))";
         }
-        if (in_array('p', $interaction)) {
-            $intr_conditions[] = "(interaction_next = 'p' OR interaction_next IS NULL AND m.interaction = 'p')";
+        if (in_array('P', $interaction)) {
+            $intr_conditions[] = "(interaction_next = 'P' OR interaction_next IS NULL AND tvml.interaction = 'P')";
         }
-        if (in_array('n', $interaction)) {
-            $intr_conditions[] = "(interaction_next = 'n' OR interaction_next IS NULL AND m.interaction = 'n')";
+        if (in_array('N', $interaction)) {
+            $intr_conditions[] = "(interaction_next = 'N' OR interaction_next IS NULL AND tvml.interaction = 'N')";
         }
         if (!empty($intr_conditions)) {
             $query .= " AND (" . implode(' OR ', $intr_conditions) . ")";
@@ -78,14 +68,14 @@ class ProgramController extends Controller
         }
 
         $pred_conditions = [];
-        if (in_array('_', $prediction)) {
-            $pred_conditions[] = "(m.pred_label IS NULL OR m.pred_label = '' OR m.pred_label = '_')";
+        if (in_array('-', $prediction)) {
+            $pred_conditions[] = "(tvml.pred_label IS NULL OR tvml.pred_label = '' OR tvml.pred_label = '-')";
         }
-        if (in_array('p', $prediction)) {
-            $pred_conditions[] = "m.pred_label = 'p'";
+        if (in_array('P', $prediction)) {
+            $pred_conditions[] = "tvml.pred_label = 'P'";
         }
-        if (in_array('n', $prediction)) {
-            $pred_conditions[] = "m.pred_label = 'n'";
+        if (in_array('N', $prediction)) {
+            $pred_conditions[] = "tvml.pred_label = 'N'";
         }
         if (!empty($pred_conditions)) {
             $query .= " AND (" . implode(' OR ', $pred_conditions) . ")";
@@ -96,24 +86,25 @@ class ProgramController extends Controller
         
         // 検索キーワード
         if (!empty($keyword)) {
-            $query .= " AND (m.pg_title LIKE :keyword_title OR m.pg_detail LIKE :keyword_detail)";
+            $query .= " AND (tvml.pgm_title LIKE :keyword_title OR tvml.pgm_description LIKE :keyword_detail OR tvml.extended LIKE :keyword_extended)";
             $params['keyword_title'] = '%' . $keyword . '%';
             $params['keyword_detail'] = '%' . $keyword . '%';
+            $params['keyword_extended'] = '%' . $keyword . '%';
         }
 
         switch ($sort) {
             case 'prob_desc':
-                $query .= " ORDER BY m.pred_proba DESC, m.pg_start ASC";
+                $query .= " ORDER BY tvml.pred_proba DESC, tvml.start_at ASC";
                 break;
             case 'prob_asc':
-                $query .= " ORDER BY m.pred_proba ASC, m.pg_start ASC";
+                $query .= " ORDER BY tvml.pred_proba ASC, tvml.start_at ASC";
                 break;
             case 'start_desc':
-                $query .= " ORDER BY m.bsdate DESC, m.pg_start DESC, m.pg_end DESC";
+                $query .= " ORDER BY tvml.start_at DESC, tvml.duration DESC";
                 break;
             case 'start_asc':
             default:
-                $query .= " ORDER BY m.bsdate ASC, m.pg_start ASC, m.pg_end ASC";
+                $query .= " ORDER BY tvml.start_at ASC, tvml.duration ASC";
                 break;
         }
         $query .= " LIMIT :limit";
@@ -127,11 +118,9 @@ class ProgramController extends Controller
             return (array) $pg;
         });
 
-        $genre_map = $this->get_genre_map();
         return view('programs.index', compact(
             'programs',
             'keyword',
-            'genre_map',
             'sort',
             'limit',
             'future_only',
@@ -142,57 +131,30 @@ class ProgramController extends Controller
         ));
     }
 
-    private function get_genre_map() {
-        $genre_map = [
-            '0'=> 'ニュース/報道',
-            '1'=> 'スポーツ',
-            '2'=> '情報/ワイドショー',
-            '3'=> 'ドラマ',
-            '4'=> '音楽',
-            '5'=> 'バラエティ',
-            '6'=> '映画',
-            '7'=> 'アニメ/特撮',
-            '8'=> 'ドキュメンタリー/教養',
-            '9'=> '劇場/公演',
-            'A'=> '趣味/教育',
-            'B'=> '福祉',
-            'F'=> 'その他',
-        ];
-        return $genre_map;
-    }
     // 詳細画面
-    public function show(Request $request, $pgm_uid)
+    public function show(Request $request, $id)
     {
         $randomwalk = (int) $request->query('randomwalk', 0);
         $backQueryParams = $request->except(['randomwalk']);
+        sscanf($id, "%d.%d", $pgm_uid, $start_at);
 
         $query = "
-            WITH tvlike1 AS (
-            SELECT *,
-            ROW_NUMBER() OVER(PARTITION BY bsdate, tuner, station_id, pg_start, pg_end, pg_title ORDER BY asof DESC) AS interaction_rank
-            FROM tvlike.interactions
-            ),
-            tvlike0 AS (
-            SELECT *
-            FROM tvlike1
-            WHERE interaction_rank = 1
-            )
             SELECT
-              m.*,
-              NULLIF(m.genre, '') AS genre,
-              i.interaction AS interaction_next 
-            FROM tvml.tvml AS m
-            LEFT OUTER JOIN tvlike0 AS i
-            ON i.bsdate = m.bsdate
-            AND i.tuner = m.tuner
-            AND i.station_id = m.station_id
-            AND i.pg_start = m.pg_start
-            AND i.pg_end = m.pg_end
-            AND i.pg_title = m.pg_title
-            WHERE m.pgm_uid = :pgm_uid
+              tvml.*,
+              tvlike.interaction AS interaction_next 
+            FROM tvmldb.tvml AS tvml
+            LEFT OUTER JOIN tvlikedb.tvlike AS tvlike
+            ON tvlike.pgm_uid = tvml.pgm_uid
+            AND tvlike.start_at > tvml.start_at - 8*24*60*60*1000
+            AND tvlike.start_at < tvml.start_at + 8*24*60*60*1000
+            AND tvlike.pgm_title = tvml.pgm_title
+            WHERE tvml.pgm_uid = :pgm_uid
+            AND tvml.start_at > :start_at - 8*24*60*60*1000
+            AND tvml.start_at < :start_at + 8*24*60*60*1000
             LIMIT 1
         ";
         $params['pgm_uid'] = $pgm_uid;
+        $params['start_at'] = $start_at;
         // クエリ実行
         $records = DB::select($query, $params);
 
@@ -208,106 +170,76 @@ class ProgramController extends Controller
         if (!$program) {
             abort(404);
         }
-        $genre_map = $this->get_genre_map();
-        return view('programs.show', compact('program', 'randomwalk', 'backQueryParams', 'genre_map'));
+        return view('programs.show', compact('program', 'randomwalk', 'backQueryParams'));
     }
 
     /**
      * ★ 詳細画面からの仕分け動作（POST）を処理
      */
-    public function interact(Request $request, $pgm_uid)
+    public function interact(Request $request, $id)
     {
-        if($pgm_uid === 'randomwalk') {
+        if($id === 'randomwalk') {
             $interaction = '';
             $randomwalk = 1;
             $backQueryParams = [];
+            $pgm_uid = null;
+            $start_at = null;
         }
         else {
             $request->validate([
-                'interaction' => 'nullable|in:p,n,_',
+                'interaction' => 'nullable|in:P,N,-',
             ]);
             $interaction = $request->input('interaction');
             $randomwalk = (int) $request->query('randomwalk', 0);
             $backQueryParams = $request->except(['interaction', 'randomwalk']);
+            sscanf($id, "%d.%d", $pgm_uid, $start_at);
         }
 
-        if (in_array(($interaction ?? ''), ['p','n','_'], true)) {
+        if (in_array(($interaction ?? ''), ['P','N','-'], true)) {
             DB::statement("
-                INSERT INTO tvlike.interactions (
-                    pgm_uid,
+                INSERT INTO tvlikedb.tvlike (
                     asof,
-                    tuner,
-                    bsdate,
-                    station_id,
-                    station_name,
-                    pgm_station_name,
-                    pid,
-                    event_id,
-                    pg_start,
-                    pg_end,
-                    pg_title,
-                    pg_detail,
-                    genre,
-                    link,
+                    pgm_uid,
+                    start_at,
+                    pgm_title,
                     interaction
                 )
                 SELECT
-                    pgm_uid,
                     asof,
-                    tuner,
-                    bsdate,
-                    station_id,
-                    station_name,
-                    pgm_station_name,
-                    pid,
-                    event_id,
-                    pg_start,
-                    pg_end,
-                    pg_title,
-                    pg_detail,
-                    genre,
-                    link,
+                    pgm_uid,
+                    start_at,
+                    pgm_title,
                     :interaction
-                FROM tvguide.programs
-                WHERE
-                pgm_uid = :pgm_uid
+                FROM epgdb.epg
+                WHERE pgm_uid = :pgm_uid
+                AND start_at = :start_at
                 LIMIT 1
-                ON CONFLICT(pgm_uid)
+                ON CONFLICT(pgm_uid, start_at)
                 DO UPDATE SET
                     asof = EXCLUDED.asof,
-                    tuner = EXCLUDED.tuner,
-                    bsdate = EXCLUDED.bsdate,
-                    station_id = EXCLUDED.station_id,
-                    station_name = EXCLUDED.station_name,
-                    pgm_station_name = EXCLUDED.pgm_station_name,
-                    pid = EXCLUDED.pid,
-                    event_id = EXCLUDED.event_id,
-                    pg_start = EXCLUDED.pg_start,
-                    pg_end = EXCLUDED.pg_end,
-                    pg_title = EXCLUDED.pg_title,
-                    pg_detail = EXCLUDED.pg_detail,
-                    genre = EXCLUDED.genre,
-                    link = EXCLUDED.link,
-                    interaction = EXCLUDED.interaction,
-                    updated_at = DATETIME('now','localtime')
+                    pgm_title = EXCLUDED.pgm_title,
+                    interaction = EXCLUDED.interaction
                 ;
             ", [
                 'pgm_uid' => $pgm_uid,
+                'start_at' => $start_at,
                 'interaction' => $interaction
             ]);
         }
 
-        $currenttime = new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo'));
-        $pasttime = $currenttime->modify('-7 days');
-        $pastdates = $pasttime->format('Ymd');
+        $tz = new DateTimeZone('Asia/Tokyo');
+        $currenttime = new DateTimeImmutable('now', $tz);
+        $pasttime = $currenttime->modify('-7 days')->setTime(0,0,0,0);
+        $pastepoch_ms = $pasttime->getTimestamp() * 1000; 
         $nextProgramUid = $pgm_uid;
+        $nextProgramStart = $start_at;
         if ($randomwalk == 1) {
             $rnd = rand(1,100);
             if ($rnd <= 33) {
-                $randomwalk_pred = "n";
+                $randomwalk_pred = "N";
             }
             elseif ($rnd <= 50) {
-                $randomwalk_pred = "p";
+                $randomwalk_pred = "P";
             }
             else {
                 $randomwalk_pred = null;
@@ -315,50 +247,62 @@ class ProgramController extends Controller
             $params_ = [];
             if(is_null($randomwalk_pred)) {
                 $with_ = "tvml1 AS (
-                    SELECT * FROM tvml.tvml
-                    WHERE pgm_uid != :current_uid
-                    AND is_target = 1
-                    AND is_preinstalled = 0
-                    AND bsdate >= :pastdates
+                    SELECT * FROM tvmldb.tvml
+                    WHERE (
+                      (pgm_uid != :current_uid OR :current_uid IS NULL)
+                      OR (start_at != :current_start OR :current_start IS NULL)
+                    )
+                    AND (pgm_title IS NOT NULL AND pgm_title != '' OR pgm_description IS NOT NULL AND pgm_description != '')
+                    AND is_target_channel = 1
+                    -- AND is_preinstalled = 0
+                    AND start_at >= :past_start
                     ORDER BY RANDOM() DESC
                     LIMIT 1
                 )";
                 $params_['current_uid'] = $pgm_uid;
-                $params_['pastdates'] = $pastdates;
+                $params_['current_start'] = $start_at;
+                $params_['past_start'] = $pastepoch_ms;
             }
             else {
                 $with_ = "tvml1 AS (
-                    SELECT * FROM tvml.tvml
-                    WHERE pgm_uid != :current_uid
-                    AND is_target = 1
-                    AND is_preinstalled = 0
-                    AND bsdate >= :pastdates
+                    SELECT * FROM tvmldb.tvml
+                    WHERE (
+                      (pgm_uid != :current_uid OR :current_uid IS NULL)
+                      OR (start_at != :current_start OR :current_start IS NULL)
+                    )
+                    AND (pgm_title IS NOT NULL AND pgm_title != '' OR pgm_description IS NOT NULL AND pgm_description != '')
+                    AND is_target_channel = 1
+                    -- AND is_preinstalled = 0
+                    AND start_at >= :past_start
                     AND pred_label = :randomwalk_pred
-                    AND (interaction IS NULL OR interaction = '_')
+                    AND (interaction IS NULL OR interaction = '-')
                     ORDER BY RANDOM() DESC
                     LIMIT 1
                 )";
                 $params_['current_uid'] = $pgm_uid;
-                $params_['pastdates'] = $pastdates;
+                $params_['current_start'] = $start_at;
+                $params_['past_start'] = $pastepoch_ms;
                 $params_['randomwalk_pred'] = $randomwalk_pred;
             }
             $nextProgram = DB::selectOne("
                 WITH
                 {$with_}
-                SELECT pgm_uid
+                SELECT *
                 FROM tvml1
             ", $params_);
             if ($nextProgram) {
                 $nextProgramUid = $nextProgram->pgm_uid;
+                $nextProgramStart = $nextProgram->start_at;
             }
             else {
                 $nextProgramUid = null;
+                $nextProgramStart = null;
             }
         }
 
         // ステータスに応じた日本語メッセージをトースト用に作成
-        $interactionLabels = ['p' => '「Positive」に仕分けました', 'n' => '「Negative」に仕分けました', '_' => '「Neutral」に仕分けました', '' => 'スキップしました'];
-        if($pgm_uid==='randomwalk') {
+        $interactionLabels = ['P' => '「Positive」に仕分けました', 'N' => '「Negative」に仕分けました', '-' => '「Neutral」に仕分けました', '' => 'スキップしました'];
+        if($id==='randomwalk') {
             $msg = '';
         }
         else {
@@ -369,7 +313,7 @@ class ProgramController extends Controller
             // 次の未処理番組がある場合、その画面へ遷移（やりなおす用に現在のUIDを渡す）
             $redirect = redirect()
                 ->route('programs.show', array_merge([
-                    'pgm_uid' => $nextProgramUid,
+                    'id' => $nextProgramUid . '.' . $nextProgramStart,
                     'randomwalk' => $randomwalk
                 ], $backQueryParams))
                 ->with([

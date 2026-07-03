@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     	if(config('database.connections.sqlite.db_path.tvml')){
             $tvmlpath=base_path(config('database.connections.sqlite.db_path.tvml'));
 	        if(is_file($tvmlpath)){
-		        $db->statement("ATTACH DATABASE '" . $tvmlpath . "' AS tvml");
+		        $db->statement("ATTACH DATABASE '" . $tvmlpath . "' AS tvmldb");
     		}
             else {
                 Log::warning($tvmlpath);
@@ -27,16 +27,16 @@ class AppServiceProvider extends ServiceProvider
     	if(config('database.connections.sqlite.db_path.tvlike')){
             $tvlikepath=base_path(config('database.connections.sqlite.db_path.tvlike'));
             if(is_file($tvlikepath)){
-                $db->statement("ATTACH DATABASE '" . $tvlikepath . "' AS tvlike");
+                $db->statement("ATTACH DATABASE '" . $tvlikepath . "' AS tvlikedb");
             }
             else {
                 Log::warning($tvlikepath);
             }
         }
-    	if(config('database.connections.sqlite.db_path.tvguide')){
-            $tvguidepath=base_path(config('database.connections.sqlite.db_path.tvguide'));
+    	if(config('database.connections.sqlite.db_path.epg')){
+            $tvguidepath=base_path(config('database.connections.sqlite.db_path.epg'));
             if(is_file($tvguidepath)){
-                $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS tvguide");
+                $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS epgdb");
             }
             else {
                 Log::warning($tvguidepath);

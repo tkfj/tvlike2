@@ -1,26 +1,30 @@
 @php
-    $interaction = $program['interaction'] ?? '_';
+    $interaction = $program['interaction'] ?? '-';
     $interactionNext = $program['interaction_next'] ?? null;
-    $pred_label = $program['pred_label'] ?? '_';
+    $pred_label = $program['pred_label'] ?? '-';
     $labelColors = [
-        'p' => ['bg' => 'bg-green-100 text-green-800'],
-        'n' => ['bg' => 'bg-red-100 text-red-800'],
-        '_' => ['bg' => 'bg-gray-100 text-gray-800'],
+        'P' => ['bg' => 'bg-green-100 text-green-800'],
+        'N' => ['bg' => 'bg-red-100 text-red-800'],
+        '-' => ['bg' => 'bg-gray-100 text-gray-800'],
     ];
-    $interactionColors = $labelColors[$interactionNext ?? $interaction] ?? $labelColors['_'];
-    $predLabelColors = $labelColors[$pred_label] ?? $labelColors['_'];
+    $interactionColors = $labelColors[$interactionNext ?? $interaction] ?? $labelColors['-'];
+    $predLabelColors = $labelColors[$pred_label] ?? $labelColors['-'];
     $interactionStar = (is_null($interactionNext) or $interaction==$interactionNext) ? '' : '*';
 
-    $dts = DateTime::createFromFormat('YmdHi', $program['pg_start']);
+    $dts = new DateTime('', new DateTimeZone('Asia/Tokyo'));
+    $dts->setTimestamp(intdiv($program['start_at'],1000));
     $d_s = $dts->format('Y-m-d');
     $dw_s = $dts->format('D');
     $t_s = $dts->format('H:i');
-    $dte = DateTime::createFromFormat('YmdHi', $program['pg_end']);
-    $dti = $dte->diff($dts);
-    $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
-    $station = $program['pgm_station_name']=='Unknown' ? $program['station_name'] : $program['pgm_station_name'];
+    $dti_m = intdiv($program['duration'], 60*1000);
 
-    $genre_cds = $program['genre'] ? explode(',', $program['genre']) : [];
+    $genre_filtered = $program['genres'] ? array_filter(json_decode($program['genres'], true), function($p) {
+        // 番組のジャンルが制御情報のものを除く
+        return $p['lv1']!=14;
+    }) : [];
+    $genre_labels = array_map(function($p) {
+        return $p['lv1_label'] . '：' . $p['lv2_label'];
+    }, $genre_filtered);
 
     /**
      * キワの確率を100% / 0%に激突させない丸め関数
@@ -43,7 +47,7 @@
 
 @extends('layouts.app')
 
-@section('title', ($program['pg_title'] ?? '番組詳細') . ' - tvlike')
+@section('title', ($program['pgm_title'] ?? '番組詳細') . ' - tvlike')
 
 @section('content')
 <div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
@@ -63,16 +67,16 @@
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
-            {{ $program['pg_title'] }}
+            {{ $program['pgm_title'] }}
         </h1>
         <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <span class="font-bold text-gray-800">{{ str_replace("_", "\u{2008}", $station) }}</span>
+            <span class="font-bold text-gray-800">{{ str_replace(" ","\u{2009}",Normalizer::normalize($program['service_name'], Normalizer::FORM_KC)) }}</span>
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-            @if($genre_cds)
+            @if($genre_labels)
                 <span class="inline-block whitespace-nowrap gap-0">
-                @foreach ($genre_cds as $genre_cd)
-                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_map[(int)$genre_cd] ?? '?' }}</span>
+                @foreach ($genre_labels as $genre_label)
+                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
                 @endforeach
                 </span>
             @endif
@@ -80,9 +84,9 @@
     </div>
 
     <div class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">
-        @if(!empty($program['pg_detail']))
+        @if(!empty($program['pgm_description']))
             <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
-                <p class="whitespace-pre-wrap text-[13px] text-gray-800">{{ $program['pg_detail'] }}</p>
+                <p class="whitespace-pre-wrap text-[13px] text-gray-800">{{ $program['pgm_description'] }}</p>
             </div>
         @endif
     </div>
@@ -95,7 +99,7 @@
 @endif
 <div class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-lg p-4 pb-safe z-50">
     <div class="max-w-md mx-auto px-4">
-        <form id="sortForm" action="{{ route('programs.interact', array_merge(['pgm_uid' => $program['pgm_uid'], 'randomwalk' => $randomwalk], $backQueryParams ?? [])) }}" method="POST" class="space-y-4">
+        <form id="sortForm" action="{{ route('programs.interact', array_merge(['id' => $program['pgm_uid'].'.'.$program['start_at'], 'randomwalk' => $randomwalk], $backQueryParams ?? [])) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="interaction" id="interactionInput" value="">
             <div id="buttonGrid" class="grid grid-cols-4 gap-3">
@@ -108,7 +112,7 @@
                     </span>
                 </button>
                 @else
-                <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}" 
+                <a href="{{ route('programs.index', $backQueryParams ?? []) }}#pgm-{{ $program['pgm_uid'] }}-{{ $program['start_at'] }}" 
                     id="backToUrlLink"
                     class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-indigo-700 bg-indigo-50 active:bg-indigo-100 border border-indigo-200 shadow-sm text-center">
                     <span class="text-base font-bold">Back</span>
@@ -118,7 +122,7 @@
                 </a>
                 @endif
 
-                <button type="button" onclick="submitForm('p')" 
+                <button type="button" onclick="submitForm('P')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-green-600 active:bg-green-700 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">Posi</span>
                     <span class="text-xs font-medium mt-0.5">
@@ -126,7 +130,7 @@
                     </span>
                 </button>
 
-                <button type="button" onclick="submitForm('n')" 
+                <button type="button" onclick="submitForm('N')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-white bg-red-600 active:bg-red-700 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">Nega</span>
                     <span class="text-xs font-medium mt-0.5">
@@ -134,7 +138,7 @@
                     </span>
                 </button>
 
-                <button type="button" onclick="submitForm('_')" 
+                <button type="button" onclick="submitForm('-')" 
                         class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl text-gray-700 bg-gray-100 active:bg-gray-200 border border-gray-300 shadow-sm focus:outline-none">
                     <span class="text-base font-bold">Neut</span>
                     <span class="text-xs font-medium mt-0.5">
@@ -160,9 +164,9 @@ window.addEventListener('keydown', (e) => {
     // 入力フォーム等にフォーカスが当たっている場合は発火させない
     if (e.target.tagName === 'INPUT' && e.target.type === 'text') return;
     
-    if (e.key === '1') submitForm('p');
-    if (e.key === '2') submitForm('n');
-    if (e.key === '3') submitForm('_');
+    if (e.key === '1') submitForm('P');
+    if (e.key === '2') submitForm('N');
+    if (e.key === '3') submitForm('-');
     if (e.key === 'Escape') {
         if ({{ (int)$randomwalk === 1 ? '1' : '0' }} === 1) {
             submitForm('');

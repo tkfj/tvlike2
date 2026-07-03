@@ -112,17 +112,17 @@ $formatProba = function ($proba) {
                 <span class="text-[11px] text-gray-400 font-bold font-mono tracking-wider shrink-0">Act:</span>
                 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="interaction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $interaction) ? 'checked' : '' }} class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="interaction[]" value="P" onchange="this.form.submit()" {{ in_array('P', $interaction) ? 'checked' : '' }} class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[10px] font-mono font-bold">Posi</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="interaction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="interaction[]" value="N" onchange="this.form.submit()" {{ in_array('N', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[10px] font-mono font-bold">Nega</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="interaction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="interaction[]" value="-" onchange="this.form.submit()" {{ in_array('-', $interaction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[10px] font-mono">None</span>
                 </label>
                 <input type="hidden" name="interaction[]" value="x">
@@ -132,17 +132,17 @@ $formatProba = function ($proba) {
                 <span class="text-[11px] text-gray-400 font-bold font-mono tracking-wider shrink-0">Pred:</span>
                 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="prediction[]" value="p" onchange="this.form.submit()" {{ in_array('p', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="prediction[]" value="P" onchange="this.form.submit()" {{ in_array('P', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-200 text-[10px] font-mono font-bold">Posi</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="prediction[]" value="n" onchange="this.form.submit()" {{ in_array('n', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="prediction[]" value="N" onchange="this.form.submit()" {{ in_array('N', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-red-50 text-red-700 rounded border border-red-200 text-[10px] font-mono font-bold">Nega</span>
                 </label>
 
                 <label class="inline-flex items-center gap-1 cursor-pointer text-xs font-medium text-gray-700 select-none">
-                    <input type="checkbox" name="prediction[]" value="_" onchange="this.form.submit()" {{ in_array('_', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <input type="checkbox" name="prediction[]" value="-" onchange="this.form.submit()" {{ in_array('-', $prediction) ? 'checked' : '' }} class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                     <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200 text-[10px] font-mono">n/a</span>
                 </label>
                 <input type="hidden" name="prediction[]" value="x">
@@ -218,67 +218,68 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="space-y-4 divide-y divide-gray-100">
             @foreach ($programs as $prog)
                 @php
-                    $dts = DateTime::createFromFormat('YmdHi', $prog['pg_start']);
+                    $dts = new DateTime('', new DateTimeZone('Asia/Tokyo'));
+                    $dts->setTimestamp(intdiv($prog['start_at'],1000));
                     $d_s = $dts ? $dts->format('Y-m-d') : '';
                     $dw_s = $dts ? $dts->format('D') : '';
                     $ts_s = $dts ? $dts->format('H:i') : '';
-                    $dte = DateTime::createFromFormat('YmdHi', $prog['pg_end']);
-                    
-                    $dti_m = 0;
-                    if ($dts && $dte) {
-                        $dti = $dte->diff($dts);
-                        $dti_m = ($dti->days * 24 * 60) + ($dti->h * 60) + $dti->i;
-                    }
+                    $dti_m = intdiv($prog['duration'],60*1000);
 
-                    $genre_cds = $prog['genre'] ? explode(',', $prog['genre']) : [];
+                    $genre_filtered = $prog['genres'] ? array_filter(json_decode($prog['genres'], true), function($p) {
+                        // 番組のジャンルが制御情報のものを除く
+                        return $p['lv1']!=14;
+                    }) : [];
+                    $genre_labels = array_map(function($p) {
+                        return $p['lv1_label'] . '：' . $p['lv2_label'];
+                    }, $genre_filtered);
 
                     $get_badge_class = function($val) {
-                        if ($val === 'p') return 'bg-green-100 text-green-800 border-green-200';
-                        if ($val === 'n') return 'bg-red-100 text-red-800 border-red-200';
+                        if ($val === 'P') return 'bg-green-100 text-green-800 border-green-200';
+                        if ($val === 'N') return 'bg-red-100 text-red-800 border-red-200';
                         return 'bg-gray-100 text-gray-800 border-gray-200';
                     };
                 @endphp
-                <div id="pgm-{{ $prog['pgm_uid'] }}" class="scroll-mt-20 py-4 first:pt-0 border-b border-gray-100 last:border-0 flex flex-col justify-between gap-2 transition-colors duration-500">
+                <div id="pgm-{{ $prog['pgm_uid'] }}-{{ $prog['start_at'] }}" class="scroll-mt-20 py-4 first:pt-0 border-b border-gray-100 last:border-0 flex flex-col justify-between gap-2 transition-colors duration-500">
                     <div class="flex-1">
                         <div class="flex items-start justify-between gap-4 mb-1">
                             <h2 class="text-base font-bold text-gray-900 leading-snug">
-                                <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" class="hover:text-indigo-600 transition-colors">
-                                    {{ $prog['pg_title'] }}
+                                <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" class="hover:text-indigo-600 transition-colors">
+                                    {{ $prog['pgm_title'] }}
                                 </a>
                             </h2>
-                            <a href="{{ route('programs.show', array_merge(['pgm_uid' => $prog['pgm_uid']], request()->query())) }}" 
+                            <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" 
                                 class="inline-block whitespace-nowrap text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition tracking-wide font-mono">
                                 View<span class="font-sans">&thinsp;</span>→
                             </a>
                         </div>
                         
                         <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace("_","\u{2009}",$prog['pgm_station_name'] ?? '???') }}</span>
+                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace(" ","\u{2009}",Normalizer::normalize($prog['service_name'], Normalizer::FORM_KC)) }}</span>
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-                            @if($genre_cds)
+                            @if($genre_labels)
                                 <span class="inline-block whitespace-nowrap gap-0">
-                                @foreach ($genre_cds as $genre_cd)
-                                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_map[(int)$genre_cd] ?? '?' }}</span>
+                                @foreach ($genre_labels as $genre_label)
+                                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
                                 @endforeach
                                 </span>
                             @endif
                         </div>
                         
-                        @if($prog['pg_detail'])
+                        @if($prog['pgm_description'])
                         <div class="text-[13px] text-gray-600 leading-relaxed mb-3 line-clamp-2">
-                            {{ $prog['pg_detail'] }}
+                            {{ $prog['pgm_description'] }}
                         </div>
                         @endif
                         
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
                             <div class="flex items-center gap-1.5">
                                 <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['interaction_next'] ?? $prog['interaction'] ?? '') }}">
-                                    Act:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'],['P','N','-'],$prog['interaction_next'] ?? $prog['interaction']) }}{{ ($prog['interaction_next'] ?? '_') == $prog['interaction'] ? '' : '*'}}
+                                    Act:<span class="font-sans">&thinsp;</span>{{ $prog['interaction_next'] ?? $prog['interaction'] }}{{ ($prog['interaction_next'] ?? '-') == $prog['interaction'] ? '' : '*'}}
                                 </span>
                                 
                                 <span class="inline-block whitespace-nowrap px-2 py-0.5 border text-[11px] rounded-full font-mono {{ $get_badge_class($prog['pred_label'] ?? '') }}">
-                                    Pred:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $prog['pred_label'] ?? '_') }}
+                                    Pred:<span class="font-sans">&thinsp;</span>{{ $prog['pred_label'] ?? '-' }}
                                     @if($prog['pred_proba'])
                                     {{ $formatProba($prog['pred_proba']) }}%
                                     @endif
@@ -286,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2">
-                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">#{{ $prog['pgm_uid'] }}.{{ $prog['asof'] ?? '-' }}</span>
+                                <span class="inline-block whitespace-nowrap text-gray-400 text-[10px] font-mono">#{{ $prog['pgm_uid'] }}.{{ $prog['start_at'] }}</span>
                             </div>
                         </div>
                     </div>
