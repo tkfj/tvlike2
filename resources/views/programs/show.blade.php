@@ -57,10 +57,10 @@
     <div class="flex flex-col space-y-3 border-b border-gray-200 pb-4">
         <div class="flex items-center space-x-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $interactionColors['bg'] }}">
-                Act:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $interactionNext ?? $interaction) }}{{ $interactionStar }}
+                Act:<span class="font-sans">&thinsp;</span>{{ $interactionNext ?? $interaction }}{{ $interactionStar }}
             </span>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono {{ $predLabelColors['bg'] }}">
-                Pred:<span class="font-sans">&thinsp;</span>{{ str_replace(['p','n','_'], ['P','N','-'], $pred_label) }}
+                Pred:<span class="font-sans">&thinsp;</span>{{ $pred_label }}
                 @if($program['pred_proba'])
                 {{ $formatProba($program['pred_proba']) }}%
                 @endif
@@ -74,9 +74,9 @@
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
             @if($genre_labels)
-                <span class="inline-block whitespace-nowrap gap-0">
+                <span class="gap-0">
                 @foreach ($genre_labels as $genre_label)
-                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                    <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
                 @endforeach
                 </span>
             @endif
