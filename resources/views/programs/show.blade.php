@@ -25,6 +25,9 @@
     $genre_labels = array_map(function($p) {
         return $p['lv1_label'] . '：' . $p['lv2_label'];
     }, $genre_filtered);
+    $adl_labels = $program['absolute_defence_line'] ? array_map(function($p) {
+        return $p['name'];
+    }, array_values(json_decode($program['absolute_defence_line'], true))) : [];
 
     /**
      * キワの確率を100% / 0%に激突させない丸め関数
@@ -73,11 +76,18 @@
             <span class="font-bold text-gray-800">{{ str_replace(" ","\u{2009}",normalize_epg_text($program['service_name'])) }}</span>
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-            @if($genre_labels)
+            @if($adl_labels || $genre_labels)
                 <span class="gap-0">
-                @foreach ($genre_labels as $genre_label)
-                    <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
-                @endforeach
+                    @if($adl_labels)
+                        @foreach ($adl_labels as $adl_label)
+                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-midium">{{ $adl_label }}</span>
+                        @endforeach
+                    @endif
+                    @if($genre_labels)
+                        @foreach ($genre_labels as $genre_label)
+                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                        @endforeach
+                    @endif
                 </span>
             @endif
         </div>

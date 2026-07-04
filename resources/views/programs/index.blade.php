@@ -243,6 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     $genre_labels = array_map(function($p) {
                         return $p['lv1_label'] . '：' . $p['lv2_label'];
                     }, $genre_filtered);
+                    $adl_labels = $prog['absolute_defence_line'] ? array_map(function($p) {
+                        return $p['name'];
+                    }, array_values(json_decode($prog['absolute_defence_line'], true))) : [];
 
                     $get_badge_class = function($val) {
                         if ($val === 'P') return 'bg-green-100 text-green-800 border-green-200';
@@ -268,11 +271,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace(" ","\u{2009}",normalize_epg_text($prog['service_name'])) }}</span>
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
-                            @if($genre_labels)
+                            @if($adl_labels || $genre_labels)
                                 <span class="gap-0">
-                                @foreach ($genre_labels as $genre_label)
-                                    <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
-                                @endforeach
+                                    @if($adl_labels)
+                                        @foreach ($adl_labels as $adl_label)
+                                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-midium">{{ $adl_label }}</span>
+                                        @endforeach
+                                    @endif
+                                    @if($genre_labels)
+                                        @foreach ($genre_labels as $genre_label)
+                                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                                        @endforeach
+                                    @endif
                                 </span>
                             @endif
                         </div>
