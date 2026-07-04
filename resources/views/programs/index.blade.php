@@ -95,15 +95,26 @@ $formatProba = function ($proba) {
                 <span>Pred</span>
             </label>
             <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50 font-mono">
-                <input type="hidden" name="tgtst_only" value="0"><input 
+                <input type="hidden" name="mych_only" value="0"><input 
                     type="checkbox" 
-                    name="tgtst_only" 
+                    name="mych_only" 
                     value="1" 
                     onchange="this.form.submit()"
-                    {{ ($tgtst_only ?? '1') === '1' ? 'checked' : '' }}
+                    {{ ($mych_only ?? '1') === '1' ? 'checked' : '' }}
                     class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
                 <span>MyCh</span>
+            </label>
+            <label class="inline-flex items-center gap-2 cursor-pointer text-[11px] font-bold text-gray-600 select-none bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm active:bg-gray-50 font-mono">
+                <input type="hidden" name="inc_empty" value="0"><input 
+                    type="checkbox" 
+                    name="inc_empty" 
+                    value="1" 
+                    onchange="this.form.submit()"
+                    {{ ($inc_empty ?? '1') === '1' ? 'checked' : '' }}
+                    class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                >
+                <span>Empty</span>
             </label>
         </div>
 

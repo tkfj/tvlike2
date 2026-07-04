@@ -19,7 +19,8 @@ class ProgramController extends Controller
         $limit = $request->input('limit', '500');
         $future_only = $request->input('future_only', '1');
         $pred_only = $request->input('pred_only', '1');
-        $tgtst_only = $request->input('tgtst_only', '1');
+        $mych_only = $request->input('mych_only', '1');
+        $inc_empty = $request->input('inc_empty', '0');
 
         $query = "
             SELECT
@@ -31,11 +32,11 @@ class ProgramController extends Controller
             ON tvlike.pgm_uid = tvml.pgm_uid
             AND tvlike.start_at > tvml.start_at - 8*24*60*60*1000
             AND tvlike.start_at < tvml.start_at + 8*24*60*60*1000
-            AND tvlike.pgm_title = tvml.pgm_title
+            AND COALESCE(tvlike.pgm_title, '') = COALESCE(tvml.pgm_title, '')
             WHERE 1=1
         ";
         $params = [];
-        if($tgtst_only === '1') {
+        if($mych_only === '1') {
             $query .= " AND tvml.is_target_channel=1";
         }
         if($pred_only === '1') {
@@ -48,6 +49,9 @@ class ProgramController extends Controller
             $currentepoch_ms = $currentdate->getTimestamp() * 1000; 
             $query .= " AND tvml.start_at >= :current_start";
             $params['current_start'] = $currentepoch_ms;
+        }
+        if($inc_empty === '0') {
+            $query .= " AND ((tvml.pgm_title IS NOT NULL AND tvml.pgm_title != '') OR (tvml.pgm_description IS NOT NULL AND tvml.pgm_description != ''))";
         }
 
         $intr_conditions = [];
@@ -125,7 +129,8 @@ class ProgramController extends Controller
             'limit',
             'future_only',
             'pred_only',
-            'tgtst_only',
+            'mych_only',
+            'inc_empty',
             'prediction',
             'interaction'
         ));
