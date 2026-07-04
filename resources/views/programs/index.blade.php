@@ -258,9 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
                             @if($genre_labels)
-                                <span class="inline-block whitespace-nowrap gap-0">
+                                <span class="gap-0">
                                 @foreach ($genre_labels as $genre_label)
-                                    <span class="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                                    <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
                                 @endforeach
                                 </span>
                             @endif
