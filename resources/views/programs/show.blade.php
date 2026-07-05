@@ -25,9 +25,7 @@
     $genre_labels = array_map(function($p) {
         return $p['lv1_label'] . '：' . $p['lv2_label'];
     }, $genre_filtered);
-    $adl_labels = $program['absolute_defence_line'] ? array_map(function($p) {
-        return $p['name'];
-    }, array_values(json_decode($program['absolute_defence_line'], true))) : [];
+    $adl_labels = $program['defence_labels'] ? array_values(json_decode($program['defence_labels'], true)) : [];
 
     /**
      * キワの確率を100% / 0%に激突させない丸め関数

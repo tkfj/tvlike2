@@ -243,9 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     $genre_labels = array_map(function($p) {
                         return $p['lv1_label'] . '：' . $p['lv2_label'];
                     }, $genre_filtered);
-                    $adl_labels = $prog['absolute_defence_line'] ? array_map(function($p) {
-                        return $p['name'];
-                    }, array_values(json_decode($prog['absolute_defence_line'], true))) : [];
+                    $adl_labels = $prog['defence_labels'] ? array_values(json_decode($prog['defence_labels'], true)) : [];
 
                     $get_badge_class = function($val) {
                         if ($val === 'P') return 'bg-green-100 text-green-800 border-green-200';
