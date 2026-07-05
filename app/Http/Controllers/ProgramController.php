@@ -135,6 +135,7 @@ class ProgramController extends Controller
             'pred_only',
             'mych_only',
             'has_value',
+            'is_adl',
             'prediction',
             'interaction'
         ));
