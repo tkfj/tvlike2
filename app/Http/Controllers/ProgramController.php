@@ -20,7 +20,8 @@ class ProgramController extends Controller
         $future_only = $request->input('future_only', '1');
         $pred_only = $request->input('pred_only', '1');
         $mych_only = $request->input('mych_only', '1');
-        $inc_empty = $request->input('inc_empty', '0');
+        $has_value = $request->input('has_value', '1');
+        $is_adl = $request->input('is_adl', '0');
 
         $query = "
             SELECT
@@ -50,8 +51,11 @@ class ProgramController extends Controller
             $query .= " AND tvml.start_at >= :current_start";
             $params['current_start'] = $currentepoch_ms;
         }
-        if($inc_empty === '0') {
+        if($has_value === '1') {
             $query .= " AND ((tvml.pgm_title IS NOT NULL AND tvml.pgm_title != '') OR (tvml.pgm_description IS NOT NULL AND tvml.pgm_description != ''))";
+        }
+        if($is_adl === '1') {
+            $query .= " AND (tvml.defence_labels IS NOT NULL AND tvml.defence_labels != '' AND tvml.defence_labels != '[]')";
         }
 
         $intr_conditions = [];
@@ -130,7 +134,7 @@ class ProgramController extends Controller
             'future_only',
             'pred_only',
             'mych_only',
-            'inc_empty',
+            'has_value',
             'prediction',
             'interaction'
         ));
