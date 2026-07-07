@@ -68,7 +68,7 @@
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
-            {{ normalize_epg_text($program['pgm_title']) }}
+            {{ clean_epg_text(normalize_epg_text($program['pgm_title'])) }}
         </h1>
         <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <span class="font-bold text-gray-800">{{ str_replace(" ","\u{2009}",normalize_epg_text($program['service_name'])) }}</span>
@@ -94,7 +94,7 @@
     <div class="mt-4 space-y-4 text-[13px] text-gray-700 leading-relaxed">
         @if(!empty($program['pgm_description']))
             <div class="bg-slate-50/50 rounded-xl p-4 border border-slate-100 shadow-sm">
-                <p class="whitespace-pre-wrap text-gray-800 leading-normal">{{ normalize_epg_text($program['pgm_description']) }}</p>
+                <p class="whitespace-pre-wrap text-gray-800 leading-normal">{{ clean_epg_text(normalize_epg_text($program['pgm_description'])) }}</p>
             </div>
         @endif
 
@@ -103,10 +103,10 @@
                 @foreach (json_decode($program['extended'], true) as $ex_key => $ex_val)
                     <div class="p-4 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-5">
                         <dt class="text-[12px] font-bold text-slate-600 font-sans tracking-wider inline-flex items-center border-l-2 border-slate-400 pl-2 self-start sm:w-full h-5 sm:h-auto">
-                            {{ normalize_epg_text($ex_key) }}
+                            {{ clean_epg_text(normalize_epg_text($ex_key)) }}
                         </dt>
                         <dd class="mt-1.5 text-gray-800 sm:mt-0 sm:col-span-3">
-                            <p class="whitespace-pre-wrap leading-normal text-[13px]">{{ normalize_epg_text($ex_val) }}</p>
+                            <p class="whitespace-pre-wrap leading-normal text-[13px]">{{ clean_epg_text(normalize_epg_text($ex_val)) }}</p>
                         </dd>
                     </div>
                 @endforeach

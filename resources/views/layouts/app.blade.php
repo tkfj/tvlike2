@@ -34,6 +34,9 @@
                     class="flex items-center hover:text-indigo-200 transition">
                     🎲<span class="font-sans">&thinsp;</span>Random<span class="font-sans">&thinsp;</span>Walk
                 </a>
+                <a href="{{ route('settings.chars') }}" class="flex items-center hover:text-indigo-200 transition">
+                    ⚙️
+                </a>
             </nav>
 
             <button 
@@ -76,6 +79,11 @@
                    onclick="event.preventDefault(); toggleMenu(); document.getElementById('nav-randomwalk-form').submit();" 
                    class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
                     <span class="mr-2 text-base shrink-0 select-none">🎲</span>Random<span class="font-sans">&thinsp;</span>Walk
+                </a>
+                <a href="{{ route('programs.index') }}" 
+                   onclick="toggleMenu()" 
+                   class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
+                    ⚙️
                 </a>
             </div>
         </nav>

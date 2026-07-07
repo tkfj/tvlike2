@@ -17,3 +17,11 @@ if (!function_exists('normalize_epg_text')) {
         return mb_convert_kana($text, "asKV", "UTF-8");
     }
 }
+if (!function_exists('clean_epg_text')) {
+    /**
+     * Settingsに基づいて[映]などのARIB外字の正規化を行う
+     */
+    function clean_epg_text(?string $text): string {
+        return app(App\Services\EpgTextCleaner::class)->clean($text);
+    }
+}

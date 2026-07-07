@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex items-start justify-between gap-4 mb-1">
                             <h2 class="text-base font-bold text-gray-900 leading-snug">
                                 <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" class="hover:text-indigo-600 transition-colors">
-                                    {{ normalize_epg_text($prog['pgm_title']) }}
+                                    {{ clean_epg_text(normalize_epg_text($prog['pgm_title'])) }}
                                 </a>
                             </h2>
                             <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" 
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         @if($prog['pgm_description'])
                         <div class="text-[13px] text-gray-600 leading-relaxed mb-3 line-clamp-2">
-                            {{ normalize_epg_text($prog['pgm_description']) }}
+                            {{ clean_epg_text(normalize_epg_text($prog['pgm_description'])) }}
                         </div>
                         @endif
                         
