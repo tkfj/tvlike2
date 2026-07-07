@@ -80,7 +80,7 @@
                    class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
                     <span class="mr-2 text-base shrink-0 select-none">🎲</span>Random<span class="font-sans">&thinsp;</span>Walk
                 </a>
-                <a href="{{ route('programs.index') }}" 
+                <a href="{{ route('settings.chars') }}" 
                    onclick="toggleMenu()" 
                    class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
                     ⚙️
