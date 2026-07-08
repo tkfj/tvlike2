@@ -35,7 +35,10 @@
                     🎲<span class="font-sans">&thinsp;</span>Random<span class="font-sans">&thinsp;</span>Walk
                 </a>
                 <a href="{{ route('settings.chars') }}" class="flex items-center hover:text-indigo-200 transition">
-                    ⚙️
+                    ⚙️ Chars
+                </a>
+                <a href="{{ route('adl.adl') }}" class="flex items-center hover:text-indigo-200 transition">
+                    ⚙️ ADL
                 </a>
             </nav>
 
@@ -83,7 +86,12 @@
                 <a href="{{ route('settings.chars') }}" 
                    onclick="toggleMenu()" 
                    class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
-                    ⚙️
+                    ⚙️ Chars
+                </a>
+                <a href="{{ route('adl.adl') }}" 
+                   onclick="toggleMenu()" 
+                   class="flex items-center px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 hover:bg-slate-50 active:bg-slate-100 transition tracking-wide font-mono">
+                    ⚙️ ADL
                 </a>
             </div>
         </nav>

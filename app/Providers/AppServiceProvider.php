@@ -34,12 +34,21 @@ class AppServiceProvider extends ServiceProvider
             }
         }
     	if(config('database.connections.sqlite.db_path.epg')){
-            $tvguidepath=base_path(config('database.connections.sqlite.db_path.epg'));
-            if(is_file($tvguidepath)){
-                $db->statement("ATTACH DATABASE '" . $tvguidepath . "' AS epgdb");
+            $epgpath=base_path(config('database.connections.sqlite.db_path.epg'));
+            if(is_file($epgpath)){
+                $db->statement("ATTACH DATABASE '" . $epgpath . "' AS epgdb");
             }
             else {
-                Log::warning($tvguidepath);
+                Log::warning($epgpath);
+            }
+        }
+    	if(config('database.connections.sqlite.db_path.adl')){
+            $adlpath=base_path(config('database.connections.sqlite.db_path.adl'));
+            if(is_file($adlpath)){
+                $db->statement("ATTACH DATABASE '" . $adlpath . "' AS adldb");
+            }
+            else {
+                Log::warning($adlpath);
             }
         }
     }

@@ -39,7 +39,8 @@ return [
             'db_path' => [
                 'epg' => env('DB_EPG'),
                 'tvlike' => env('DB_TVLIKE'),
-                'tvml' => env('DB_TVML')
+                'tvml' => env('DB_TVML'),
+                'adl' => env('DB_ADL')
             ]
         ],
         'mysql' => [
