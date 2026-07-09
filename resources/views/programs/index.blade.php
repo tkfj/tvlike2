@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex items-start justify-between gap-4 mb-1">
                             <h2 class="text-base font-bold text-gray-900 leading-snug">
                                 <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" class="hover:text-indigo-600 transition-colors">
-                                    {{ clean_epg_text(normalize_epg_text($prog['pgm_title'])) }}
+                                    {{ clean_epg_text($prog['norm_title']) }}
                                 </a>
                             </h2>
                             <a href="{{ route('programs.show', array_merge(['id' => $prog['pgm_uid'].'.'.$prog['start_at']], request()->query())) }}" 
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace(" ","\u{2009}",normalize_epg_text($prog['service_name'])) }}</span>
+                            <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace(" ","\u{2009}", $prog['service_name_norm']) }}</span>
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
                             @if($adl_labels || $genre_labels)
@@ -299,9 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             @endif
                         </div>
                         
-                        @if($prog['pgm_description'])
+                        @if($prog['norm_description'])
                         <div class="text-[13px] text-gray-600 leading-relaxed mb-3 line-clamp-2">
-                            {{ clean_epg_text(normalize_epg_text($prog['pgm_description'])) }}
+                            {{ clean_epg_text($prog['norm_description']) }}
                         </div>
                         @endif
                         

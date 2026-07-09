@@ -68,10 +68,10 @@
             </span>
         </div>
         <h1 class="text-xl font-bold text-gray-900 leading-tight">
-            {{ clean_epg_text(normalize_epg_text($program['pgm_title'])) }}
+            {{ clean_epg_text($program['norm_title']) }}
         </h1>
         <div class="text-xs text-gray-600 bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <span class="font-bold text-gray-800">{{ str_replace(" ","\u{2009}",normalize_epg_text($program['service_name'])) }}</span>
+            <span class="font-bold text-gray-800">{{ str_replace(" ","\u{2009}",$program['service_name_norm']) }}</span>
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
             @if($adl_labels || $genre_labels)
@@ -92,21 +92,21 @@
     </div>
 
     <div class="mt-4 space-y-4 text-[13px] text-gray-700 leading-relaxed">
-        @if(!empty($program['pgm_description']))
+        @if(!empty($program['norm_description']))
             <div class="bg-slate-50/50 rounded-xl p-4 border border-slate-100 shadow-sm">
-                <p class="whitespace-pre-wrap text-gray-800 leading-normal">{{ clean_epg_text(normalize_epg_text($program['pgm_description'])) }}</p>
+                <p class="whitespace-pre-wrap text-gray-800 leading-normal">{{ clean_epg_text($program['norm_description']) }}</p>
             </div>
         @endif
 
-        @if(!empty($program['extended']))
+        @if(!empty($program['norm_extended']))
             <div class="bg-slate-50/30 rounded-xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-100">
-                @foreach (json_decode($program['extended'], true) as $ex_key => $ex_val)
+                @foreach (json_decode($program['norm_extended'], true) as $ex_key => $ex_val)
                     <div class="p-4 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-5">
                         <dt class="text-[12px] font-bold text-slate-600 font-sans tracking-wider inline-flex items-center border-l-2 border-slate-400 pl-2 self-start sm:w-full h-5 sm:h-auto">
-                            {{ clean_epg_text(normalize_epg_text($ex_key)) }}
+                            {{ clean_epg_text($ex_key) }}
                         </dt>
                         <dd class="mt-1.5 text-gray-800 sm:mt-0 sm:col-span-3">
-                            <p class="whitespace-pre-wrap leading-normal text-[13px]">{{ clean_epg_text(normalize_epg_text($ex_val)) }}</p>
+                            <p class="whitespace-pre-wrap leading-normal text-[13px]">{{ clean_epg_text($ex_val) }}</p>
                         </dd>
                     </div>
                 @endforeach

@@ -27,7 +27,7 @@ class EpgTextCleaner
         'cinema'=>['🈙','[映]'],
         'free'=>['🈚','[無]'],
         'paid'=>['🈛','[料]'],
-        'parental_lock'=>['⚿','[🔑]'],
+        'parental_lock'=>['⚿','[鍵]'],
         'part1'=>['🈜','[前]'],
         'part2'=>['🈝','[後]'],
         'rerun'=>['🈞','[再]'],

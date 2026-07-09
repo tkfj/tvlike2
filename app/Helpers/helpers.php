@@ -2,6 +2,7 @@
 
 if (!function_exists('normalize_epg_text')) {
     /**
+     * @deprecated DBの正規化済みカラムを使用すること
      * EPGテキストをaKVモードで正規化する
      * Unicodeの正規化は[映]などの四角囲みを外してしまうので使用しない。
      * 'a': 全角英数記を半角に変換
