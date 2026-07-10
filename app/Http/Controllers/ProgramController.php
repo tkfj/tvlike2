@@ -52,7 +52,7 @@ class ProgramController extends Controller
             $params['current_start'] = $currentepoch_ms;
         }
         if($has_value === '1') {
-            $query .= " AND ((tvml.pgm_title IS NOT NULL AND tvml.pgm_title != '') OR (tvml.pgm_description IS NOT NULL AND tvml.pgm_description != ''))";
+            $query .= " AND ((tvml.norm_title IS NOT NULL AND tvml.norm_title != '') OR (tvml.norm_description IS NOT NULL AND tvml.norm_description != ''))";
         }
         if($is_adl === '1') {
             $query .= " AND (tvml.defence_labels IS NOT NULL AND tvml.defence_labels != '' AND tvml.defence_labels != '[]')";
@@ -94,7 +94,7 @@ class ProgramController extends Controller
         
         // 検索キーワード
         if (!empty($keyword)) {
-            $query .= " AND (tvml.pgm_title LIKE :keyword_title OR tvml.pgm_description LIKE :keyword_detail OR tvml.extended LIKE :keyword_extended)";
+            $query .= " AND (tvml.norm_title LIKE :keyword_title OR tvml.norm_description LIKE :keyword_detail OR tvml.norm_extended LIKE :keyword_extended)";
             $params['keyword_title'] = '%' . $keyword . '%';
             $params['keyword_detail'] = '%' . $keyword . '%';
             $params['keyword_extended'] = '%' . $keyword . '%';
@@ -264,7 +264,6 @@ class ProgramController extends Controller
                     )
                     AND (pgm_title IS NOT NULL AND pgm_title != '' OR pgm_description IS NOT NULL AND pgm_description != '')
                     AND is_target_channel = 1
-                    -- AND is_preinstalled = 0
                     AND start_at >= :past_start
                     ORDER BY RANDOM() DESC
                     LIMIT 1
@@ -282,7 +281,6 @@ class ProgramController extends Controller
                     )
                     AND (pgm_title IS NOT NULL AND pgm_title != '' OR pgm_description IS NOT NULL AND pgm_description != '')
                     AND is_target_channel = 1
-                    -- AND is_preinstalled = 0
                     AND start_at >= :past_start
                     AND pred_label = :randomwalk_pred
                     AND (interaction IS NULL OR interaction = '-')
