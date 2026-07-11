@@ -114,7 +114,7 @@ $formatProba = function ($proba) {
                     {{ ($has_value ?? '1') === '1' ? 'checked' : '' }}
                     class="w-3.5 h-3.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 >
-                <span>HasValue</span>
+                <span>hasValue</span>
             </label>
         </div>
 
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         return $p['lv1']!=14 && !($p['lv1']==11 && ($p['lv2']==5 || $p['lv2']==6));
                     }) : [];
                     $genre_labels = array_map(function($p) {
-                        return $p['lv1_label'] . '：' . $p['lv2_label'];
+                        return $p['lv1_label'] . ' : ' . $p['lv2_label'];
                     }, $genre_filtered);
                     $adl_labels = $prog['defence_labels'] ? array_values(json_decode($prog['defence_labels'], true)) : [];
 
@@ -279,23 +279,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             </a>
                         </div>
                         
-                        <div class="text-xs text-gray-500 space-x-1 mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <div class="text-xs text-gray-500 flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2">
                             <span class="inline-block whitespace-nowrap font-bold text-gray-800">{{ str_replace(" ","\u{2009}", $prog['service_name_norm']) }}</span>
                             <span class="inline-block whitespace-nowrap font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $ts_s }}</span>
                             <span class="inline-block whitespace-nowrap font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
+                            
                             @if($adl_labels || $genre_labels)
-                                <span class="gap-0">
+                                <div class="flex flex-wrap items-center gap-1.5">
                                     @if($adl_labels)
                                         @foreach ($adl_labels as $adl_label)
-                                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-midium">{{ $adl_label }}</span>
+                                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">{{ $adl_label }}</span>
                                         @endforeach
                                     @endif
                                     @if($genre_labels)
                                         @foreach ($genre_labels as $genre_label)
-                                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ $genre_label }}</span>
                                         @endforeach
                                     @endif
-                                </span>
+                                </div>
                             @endif
                         </div>
                         

@@ -23,7 +23,7 @@
         return $p['lv1']!=14 && !($p['lv1']==11 && ($p['lv2']==5 || $p['lv2']==6));
     }) : [];
     $genre_labels = array_map(function($p) {
-        return $p['lv1_label'] . '：' . $p['lv2_label'];
+        return $p['lv1_label'] . ' : ' . $p['lv2_label'];
     }, $genre_filtered);
     $adl_labels = $program['defence_labels'] ? array_values(json_decode($program['defence_labels'], true)) : [];
 
@@ -48,7 +48,7 @@
 
 @extends('layouts.app')
 
-@section('title', ($program['pgm_title'] ?? '番組詳細') . ' - tvlike')
+@section('title', ($program['norm_title'] ?? '番組詳細') . ' - tvlike')
 
 @section('content')
 <div class="w-full md:max-w-3xl mx-auto px-4 text-xs font-medium text-gray-400 font-mono tracking-widest mb-4">
@@ -75,18 +75,18 @@
             <span class="font-mono text-gray-500">{{ $d_s }}<span class="font-sans">&thinsp;</span>{{ $dw_s }}<span class="font-sans">&thinsp;</span>{{ $t_s }}</span>
             <span class="font-mono bg-gray-200/60 text-gray-700 px-1.5 py-0.5 rounded font-medium">{{ $dti_m }}<span class="font-sans">&thinsp;</span>min</span>
             @if($adl_labels || $genre_labels)
-                <span class="gap-0">
+                <div class="flex flex-wrap items-center gap-1.5">
                     @if($adl_labels)
                         @foreach ($adl_labels as $adl_label)
-                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-midium">{{ $adl_label }}</span>
+                            <span class="inline-block whitespace-nowrap bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">{{ $adl_label }}</span>
                         @endforeach
                     @endif
                     @if($genre_labels)
                         @foreach ($genre_labels as $genre_label)
-                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-midium">{{ $genre_label }}</span>
+                            <span class="inline-block whitespace-nowrap bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ $genre_label }}</span>
                         @endforeach
                     @endif
-                </span>
+                </div>
             @endif
         </div>
     </div>
