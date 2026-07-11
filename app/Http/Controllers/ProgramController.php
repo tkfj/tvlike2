@@ -94,10 +94,11 @@ class ProgramController extends Controller
         
         // 検索キーワード
         if (!empty($keyword)) {
+            $keyword_norm = normalize_zen_han_text($keyword);
             $query .= " AND (tvml.norm_title LIKE :keyword_title OR tvml.norm_description LIKE :keyword_detail OR tvml.norm_extended LIKE :keyword_extended)";
-            $params['keyword_title'] = '%' . $keyword . '%';
-            $params['keyword_detail'] = '%' . $keyword . '%';
-            $params['keyword_extended'] = '%' . $keyword . '%';
+            $params['keyword_title'] = '%' . $keyword_norm . '%';
+            $params['keyword_detail'] = '%' . $keyword_norm . '%';
+            $params['keyword_extended'] = '%' . $keyword_norm . '%';
         }
 
         switch ($sort) {
