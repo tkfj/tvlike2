@@ -16,7 +16,8 @@
         }
     },
     "remoteUser": "vscode",
-    "postCreateCommand": "composer install",
+    "postCreateCommand": 
+        "composer install &&  ssh -f -N -o StrictHostKeyChecking=no -L 1234:localhost:1234 $(ip route | awk '/default/ {print $3}')",
     "containerEnv": {
         "XDEBUG_MODE": "off"
     }

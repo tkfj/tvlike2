@@ -18,7 +18,7 @@ class ADLController extends Controller
         } 
         else {
             $adl_yaml = "# absolute defence line
-feature: []
+features: {}
 ";
         }
         return view('adl.adl', compact('adl_yaml'));
@@ -27,7 +27,6 @@ feature: []
     public function adlUpdate(Request $request)
     {
         $adl_yaml = $request->input('adl_yaml');
-
         // 万が一空で送信された場合の最低限のケア
         if (empty(trim($adl_yaml))) {
             return redirect()->back()
